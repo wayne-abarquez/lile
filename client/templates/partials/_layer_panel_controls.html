@@ -1,0 +1,21 @@
+{% raw %}
+<section id="layer-toggle-btn-container" layout="column">
+
+    <md-button class="md-hue-2" ng-click="indexCtl.toggleRoutePanel()">
+        <md-tooltip md-direction="right">
+            Route Planner
+        </md-tooltip>
+        <md-icon>local_shipping</md-icon>
+    </md-button>
+
+    <md-divider></md-divider>
+
+    <md-button id="layer-toggle-btn" ng-click="indexCtl.toggleLayerPanel()">
+        <md-tooltip md-direction="right">
+            Show Layers
+        </md-tooltip>
+        <md-icon>layers</md-icon>
+    </md-button>
+
+</section>
+{% endraw %}

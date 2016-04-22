@@ -1,0 +1,26 @@
+2016-02-01 15:35:35,258 INFO - __init__.py <module>: Will output log to /var/www/demo_boilerplate/logs/app.log
+2016-02-01 15:35:35,459 INFO - run.py <module>: Starting app
+2016-02-01 18:23:10,682 INFO - __init__.py <module>: Will output log to /var/www/demo_boilerplate/logs/app.log
+2016-02-01 18:23:10,846 INFO - run.py <module>: Starting app
+2016-02-01 18:24:39,220 INFO - __init__.py <module>: Will output log to /var/www/demo_boilerplate/logs/app.log
+2016-02-01 18:24:39,244 INFO - run.py <module>: Starting app
+2016-02-01 18:27:27,055 INFO - __init__.py <module>: Will output log to /var/www/demo_boilerplate/logs/app.log
+2016-02-01 18:27:27,075 INFO - run.py <module>: Starting app
+2016-02-01 18:35:12,295 INFO - __init__.py <module>: Will output log to /var/www/demo_boilerplate/logs/app.log
+2016-02-01 18:35:12,314 INFO - run.py <module>: Starting app
+2016-02-02 13:11:34,675 INFO - __init__.py <module>: Will output log to /var/www/demo_boilerplate/logs/app.log
+2016-02-02 13:11:36,266 INFO - run.py <module>: Starting app
+2016-02-03 19:07:19,050 INFO - __init__.py <module>: Will output log to /var/www/demo_boilerplate/logs/app.log
+2016-02-03 19:07:19,560 INFO - run.py <module>: Starting app
+2016-02-03 20:43:05,988 INFO - __init__.py <module>: Will output log to /var/www/demo_boilerplate/logs/app.log
+2016-02-03 20:43:06,142 INFO - run.py <module>: Starting app
+2016-02-11 20:29:03,916 INFO - __init__.py <module>: Will output log to /var/www/demo_boilerplate/logs/app.log
+2016-02-11 20:29:04,491 INFO - run.py <module>: Starting app
+2016-02-17 14:47:28,056 INFO - __init__.py <module>: Will output log to /var/www/demo_boilerplate/logs/app.log
+2016-02-17 14:47:28,279 INFO - run.py <module>: Starting app
+2016-04-21 17:03:41,215 INFO - __init__.py <module>: Will output log to /var/www/lile/logs/app.log
+2016-04-21 17:03:41,274 INFO - run.py <module>: Starting app
+2016-04-21 17:06:11,527 INFO - __init__.py <module>: Will output log to /var/www/lile/logs/app.log
+2016-04-21 17:06:11,558 INFO - run.py <module>: Starting app
+2016-04-22 11:55:23,442 INFO - __init__.py <module>: Will output log to /var/www/lile/logs/app.log
+2016-04-22 11:55:23,467 INFO - run.py <module>: Starting app

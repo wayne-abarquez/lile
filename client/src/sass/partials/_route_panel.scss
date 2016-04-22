@@ -1,0 +1,47 @@
+$panelHeight: 60%;
+md-sidenav#route-panel {
+  z-index: 11;
+  height: $panelHeight !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  top: 10%;
+  width: 30%;
+
+  md-toolbar {
+    width: 100%;
+  }
+
+  md-content {
+    padding: 10px !important;
+    height: calc(100% - 40px) !important;
+
+    .route-panel-content-body {
+      padding: 0;
+
+      ul.collapsible {
+        box-shadow: none;
+
+        .collapsible-body {
+          .add-destination-by-address-container {
+            padding: 10px;
+
+            md-input-container.route-dest-add-address {
+              width: 80%;
+            }
+
+            md-input-container {
+              padding: 0;
+              margin: 0;
+
+              input {
+                margin-bottom: 0;
+              }
+            }
+
+          }
+        }
+
+      }
+    }
+  }
+}
