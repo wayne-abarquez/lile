@@ -2,15 +2,12 @@
     'use strict';
 
     angular.module('demoApp')
-        .controller('routePanelController', ['$rootScope', 'gmapServices', 'DEST_MARKER_BASE_PATH', routePanelController]);
+        .controller('routePanelController', ['$rootScope', 'gmapServices', 'routePlannerService', routePanelController]);
 
-    function routePanelController($rootScope, gmapServices, DEST_MARKER_BASE_PATH) {
+    function routePanelController($rootScope, gmapServices, routePlannerService) {
         var vm = this;
 
-        var dropDestinationListener,
-            destinationCtr = 0;
-
-        var destinations = [];
+        var autocompleteDestination;
 
         vm.initialize = initialize;
         vm.clearRoutes = clearRoutes;
@@ -20,44 +17,34 @@
         /* Controller Functions here */
 
         function initialize() {
+            autocompleteDestination = gmapServices.initializeAutocomplete('destination-address-input');
+            autocompleteDestination.addListener('place_changed', destinationAutocompleteChangeCallback);
+
             $rootScope.$on('route-panel-opened', function(){
                 // set cursor to crosshair
-                gmapServices.setMapTargetCursor();
                 // initialize destination adding when map is clicked
-                activateDropDestinationPoints();
+                routePlannerService.initialize();
             });
+        }
+
+        function destinationAutocompleteChangeCallback () {
+            var place = autocompleteDestination.getPlace();
+            if ( !place.geometry) {
+                alert("Autocomplete's returned place contains no geometry");
+                return;
+            }
+            // If the place has a geometry, then present it on a map.
+            if ( place.geometry.viewport) {
+                gmapServices.map.fitBounds(place.geometry.viewport);
+            } else {
+                gmapServices.map.setCenter(place.geometry.location);
+                gmapServices.map.setZoom(15);
+            }
         }
 
         function clearRoutes () {
-            destinations.forEach(function(d){
-                gmapServices.hideMarker(d.marker);
-            });
-            destinations = [];
-            destinationCtr = 0;
+            routePlannerService.clearRoutes();
         }
 
-        function activateDropDestinationPoints () {
-            dropDestinationListener = gmapServices.addMapListener('click', function(e){
-                var num = generateDestinationNumber();
-
-                var latLng = e.latLng,
-                    icon = generateDestinationMarker(num)
-                ;
-
-                destinations.push({
-                    number: num,
-                    coordinates: latLng,
-                    marker: gmapServices.initMarker(latLng, icon)
-                });
-            });
-        }
-
-        function generateDestinationNumber () {
-            return ++destinationCtr;
-        }
-
-        function generateDestinationMarker(num) {
-            return DEST_MARKER_BASE_PATH + 'number_' + num + '.png';
-        }
     }
 }());

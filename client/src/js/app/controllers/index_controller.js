@@ -2,9 +2,9 @@
 'use strict';
 
 angular.module('demoApp')
-    .controller('indexController', ['$scope', '$rootScope', '$mdSidenav', 'gmapServices', indexController]);
+    .controller('indexController', ['$scope', '$rootScope', '$mdSidenav', 'routePlannerService', indexController]);
 
-    function indexController ($scope, $rootScope, $mdSidenav, gmapServices) {
+    function indexController ($scope, $rootScope, $mdSidenav, routePlannerService) {
         var vm = this;
 
         // Show Treasure Overlay Spinner
@@ -23,7 +23,7 @@ angular.module('demoApp')
 
         function initialize () {
             $scope.$on('routePanel-closed', function() {
-              gmapServices.setMapDefaultCursor();
+                routePlannerService.endService();
             });
         }
 
