@@ -2,9 +2,9 @@
     'use strict';
 
     angular.module('demoApp')
-        .controller('layerController', ['$rootScope', layerController]);
+        .controller('layerController', ['$rootScope', 'truckServices', layerController]);
 
-    function layerController($rootScope) {
+    function layerController($rootScope, truckServices) {
         var vm = this;
 
         vm.layers = [
@@ -44,13 +44,23 @@
                         action: 'layerCtl.toggleZones("6")'
                     }
                 ]
-            }
+            },
+            {
+                label: 'Trucks',
+                action: 'layerCtl.toggleTrucks()',
+                selected: false
+            },
         ];
 
         vm.toggleZones = toggleZones;
+        vm.toggleTrucks = toggleTrucks;
 
         function toggleZones (_zoneNumber) {
             $rootScope.$broadcast('toggle-zone-layer', {zoneNumber: _zoneNumber});
+        }
+
+        function toggleTrucks () {
+            truckServices.toggleTrucks();
         }
 
     }

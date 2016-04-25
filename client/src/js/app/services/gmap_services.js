@@ -17,8 +17,11 @@
         service.mapProjection = null;
         service.overlayView = null;
 
-
         service.geocoder = null;
+
+        service.directionsService = null;
+        service.directionsRenderer = null;
+        service.tsp = null;
 
         service.markers = [];
 
@@ -95,6 +98,7 @@
         service.fillPolygon = fillPolygon;
         service.getPolygonCenter = getPolygonCenter;
         service.panToPolygon = panToPolygon;
+        service.isLocationWithinPolygon = isLocationWithinPolygon;
         service.createPolyline = createPolyline;
         service.createDashedPolyline = createDashedPolyline;
         service.updatePolyline = updatePolyline;
@@ -122,6 +126,7 @@
         service.triggerEvent = triggerEvent;
         service.setMapDefaultCursor = setMapDefaultCursor;
         service.setMapTargetCursor = setMapTargetCursor;
+        service.createDirectionsRenderer = createDirectionsRenderer;
 
         function apiAvailable() {
             return typeof window.google === 'object';
@@ -145,12 +150,15 @@
                 zoomControlOptions: {
                     position: google.maps.ControlPosition.RIGHT_BOTTOM
                 },
-                panControl: false
+                panControl: false,
+                clickableIcons: false
             };
 
             $(myMapId).height($(window).height() - (42));
 
             service.map = new google.maps.Map(document.getElementById(mapIdLoc), mapOptions);
+
+            loadDirectionsService();
 
             // handle window resize event
             google.maps.event.addDomListener(window, 'resize', function () {
@@ -161,6 +169,29 @@
             });
 
             return service.map;
+        }
+
+        function loadDirectionsService() {
+            service.directionsService = new google.maps.DirectionsService;
+            //service.directionsRenderer = new google.maps.DirectionsRenderer({map: service.map});
+            var directionsPanel = document.createElement("div");
+            service.tsp = new BpTspSolver(service.map, directionsPanel);
+            service.tsp.setTravelMode(google.maps.DirectionsTravelMode.DRIVING);
+
+        }
+
+        function createDirectionsRenderer (polyColor) {
+            var dirRenderer = new google.maps.DirectionsRenderer({map: service.map});
+
+            dirRenderer.setOptions({
+                polylineOptions: {
+                    strokeColor: polyColor,
+                    strokeOpacity: 1,
+                    strokeWeight: 2
+                }
+            });
+
+            return dirRenderer;
         }
 
         function createInfoBox(template) {
@@ -672,6 +703,12 @@
             if (!service.map || !polygon) return;
 
             service.panTo(service.getPolygonCenter(polygon));
+        }
+
+        function isLocationWithinPolygon (latLng, poly) {
+            if (!service.map || !poly) return false;
+
+            return google.maps.geometry.poly.containsLocation(latLng, poly);
         }
 
         function createPolyline(path, lineColor) {

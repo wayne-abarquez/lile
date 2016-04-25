@@ -114,4 +114,9 @@ md-sidenav#layer-panel {
   width: 235px;
   max-height: 210px;
   overflow-x: hidden;
+
+  v-accordion {
+    padding-left: 55px !important;
+    padding-top: 20px;
+  }
 }

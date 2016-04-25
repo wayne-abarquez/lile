@@ -12,6 +12,7 @@ angular.module('demoApp')
         service.showEntityNotFound = showEntityNotFound;
         service.showFilterSelectionEmpty = showFilterSelectionEmpty;
         service.showQueryIsEmpty = showQueryIsEmpty;
+        service.showZoneLocationInvalid = showZoneLocationInvalid;
 
         function showBottomLeftToast(message) {
             $mdToast.show(
@@ -26,25 +27,27 @@ angular.module('demoApp')
             service.showBottomLeftToast('No '+ entityName +' data available for this area.');
         }
 
-        function showEntityNotFound(entityName) {
+        function showMessage(message, type) {
             SweetAlert.swal({
-                title: entityName + ' not found.',
-                type: 'warning'
+                title: message,
+                type: type
             });
+        }
+
+        function showEntityNotFound(entityName) {
+            showMessage(entityName + ' not found.', 'warning');
         }
 
         function showFilterSelectionEmpty() {
-            SweetAlert.swal({
-                title: 'Please select filter type.',
-                type: 'warning'
-            });
+            showMessage('Please select filter type.', 'warning');
         }
 
         function showQueryIsEmpty () {
-            SweetAlert.swal({
-                title: 'Please fill in search query.',
-                type: 'info'
-            });
+            showMessage('Please fill in search query.', 'info');
+        }
+
+        function showZoneLocationInvalid () {
+            showMessage('Selected Location is out of Zone.', 'warning');
         }
 
         return service;

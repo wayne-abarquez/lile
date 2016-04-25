@@ -19,7 +19,8 @@ gulp.task('vendor-scripts', function () {
         paths.bower + 'sweetalert/dist/sweetalert.min.js',
         paths.bower + 'ngSweetAlert/SweetAlert.min.js',
         paths.bower + 'angular-treasure-overlay-spinner/dist/treasure-overlay-spinner.min.js',
-        paths.bower + 'v-accordion/dist/v-accordion.min.js'
+        paths.bower + 'v-accordion/dist/v-accordion.min.js',
+        paths.srcLibJs + 'BpTspSolver.js'
     ])
         .pipe($.plumber())
         .pipe($.concat('vendor.min.js'))

@@ -17,7 +17,7 @@
   <md-content layout-padding ng-controller="routePanelController as routeCtl">
       <div layout="column" class="route-panel-content-body">
 
-          <ul class="collapsible" data-collapsible="expandable">
+          <ul class="collapsible" data-collapsible="accordion">
               <li>
                   <div class="collapsible-header"><i class="material-icons">navigation</i>Destinations</div>
                   <div class="collapsible-body">
@@ -25,27 +25,43 @@
                       <div class="add-destination-by-address-container" layout="column">
                             <div>
                                 <md-input-container class="route-dest-add-address" md-no-float>
-                                    <input id="destination-address-input" placeholder="Add Location by Address">
+                                    <input id="destination-address-input" ng-model="routeCtl.place" placeholder="Add Location by Address">
                                 </md-input-container>
-                                <md-button class="md-icon-button md-raised">
-                                    <md-icon>add</md-icon>
-                                </md-button>
+                                <md-button class="md-icon-button md-raised" ng-disabled="routeCtl.place == ''" ng-click="routeCtl.addSelectedPlace()"><md-icon>add</md-icon></md-button>
                             </div>
                       </div>
                   </div>
               </li>
-              <li>
+              <li class="li-parent-destinations-list">
                   <div class="collapsible-header"><i class="material-icons">pin_drop</i>Routes</div>
-                  <div class="collapsible-body">
-                  <!-- EDIT ROUTE -->
-                      <p>Lorem ipsum dolor sit amet.</p>
+                  <div class="collapsible-body collapsible-body-destinations-list">
+                    <!-- EDIT ROUTE -->
+                      <ul class="collapsible" data-collapsible="accordion">
+                          <li ng-repeat="(zoneNo, zoneDestinations) in routeCtl.destinations" ng-if="zoneDestinations.length > 0">
+                              <div class="collapsible-header"><i class="material-icons">wifi_tethering</i> <b>Zone
+                                  {{zoneNo}}</b> <span
+                                      style="float:right;">({{zoneDestinations.length}} destination/s)</span>
+                              </div>
+                              <div class="collapsible-body">
+                                  <md-list class="md-list-destinations" flex>
+                                      <md-list-item class="md-3-line" ng-repeat="dest in zoneDestinations" ng-click="routeCtl.onClickDestinationItem(dest.latLng)">
+                                          <img ng-src="{{dest.icon}}" class="md-avatar" alt="">
+                                          <div class="md-list-item-text" layout="row" flex="75">{{ dest.location }}</div>
+                                          <span flex="10">
+                                            <md-button class="md-icon-button md-raised" ng-click="routeCtl.removeDestination(dest.number, zoneNo)"><md-icon>close</md-icon></md-button>
+                                          </span>
+                                      </md-list-item>
+                                  </md-list>
+                              </div>
+                          </li>
+                      </ul>
                   </div>
               </li>
           </ul>
 
           <div layout="column" style="position:absolute;bottom:0;left:20%;padding-bottom:10px">
-            <md-button class="md-raised">Calculate Fastest Roundtrip</md-button>
-            <md-button class="md-raised">Calculate Fastest A-Z Trip</md-button>
+            <md-button class="md-raised" ng-click="routeCtl.calculateFastestRoundtrip()">Calculate Fastest Roundtrip</md-button>
+            <md-button class="md-raised" ng-click="routeCtl.calculateFastestAZTrip()">Calculate Fastest A-Z Trip</md-button>
             <md-button ng-click="routeCtl.clearRoutes()">Clear Routes</md-button>
           </div>
 

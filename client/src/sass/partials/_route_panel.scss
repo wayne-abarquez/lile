@@ -1,4 +1,4 @@
-$panelHeight: 60%;
+$panelHeight: 80%;
 md-sidenav#route-panel {
   z-index: 11;
   height: $panelHeight !important;
@@ -15,6 +15,11 @@ md-sidenav#route-panel {
     padding: 10px !important;
     height: calc(100% - 40px) !important;
 
+    li.li-parent-destinations-list {
+      max-height: 450px; // TODO: make it dynamic use %
+      overflow-y: auto;
+    }
+
     .route-panel-content-body {
       padding: 0;
 
@@ -22,6 +27,7 @@ md-sidenav#route-panel {
         box-shadow: none;
 
         .collapsible-body {
+
           .add-destination-by-address-container {
             padding: 10px;
 
@@ -37,8 +43,64 @@ md-sidenav#route-panel {
                 margin-bottom: 0;
               }
             }
-
           }
+        }
+
+        .collapsible-body.collapsible-body-destinations-list {
+          md-list.md-list-destinations {
+            padding-top: 0px;
+            padding-bottom: 0px;
+
+            md-list-item {
+              height: 45px;
+              min-height: 0px;
+
+              button {
+                padding-left:10px;
+                min-height: 0px;
+                height: inherit;
+
+                .md-list-item-inner {
+                  min-height: 0px;
+                  height: inherit;
+
+                  img {
+                    border-radius: 0;
+                    height: 80%;
+                    width: auto;
+                  }
+
+                  .md-list-item-text {
+                    font-size: 14px;
+                    max-height: 100px;
+                    height: auto;
+                    word-wrap: break-word;
+                    line-height: 20px;
+
+                    p {
+                      padding: 5px;
+                    }
+                  }
+
+                  button {
+                    z-index: 12;
+                    margin: 0px;
+                    padding: 0px;
+
+                    height: 30px;
+                    width: 30px;
+                    line-height: 33px;
+
+                    md-icon {
+                      font-size:20px;
+                    }
+                  }
+
+                }
+              }
+            }
+          }
+
         }
 
       }
