@@ -13,6 +13,7 @@ angular.module('demoApp')
         service.toggleTrucks = toggleTrucks;
         service.getTruckByZoneNo = getTruckByZoneNo;
         service.showTruckByZoneNo = showTruckByZoneNo;
+        service.hideTrucks = hideTrucks;
 
         function initialize () {
             loadTrucks();
@@ -35,6 +36,15 @@ angular.module('demoApp')
                     gmapServices.hideMarker(truck.marker);
                 } else {
                     gmapServices.showMarker(truck.marker);
+                }
+                return;
+            });
+        }
+
+        function hideTrucks () {
+            service.trucks.forEach(function (truck) {
+                if (truck.marker && truck.marker.getMap()) {
+                    gmapServices.hideMarker(truck.marker);
                 }
                 return;
             });

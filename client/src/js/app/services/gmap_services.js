@@ -178,21 +178,27 @@
             var directionsPanel = document.createElement("div");
             service.tsp = new BpTspSolver(service.map, directionsPanel);
             service.tsp.setTravelMode(google.maps.DirectionsTravelMode.DRIVING);
-
         }
 
         function createDirectionsRenderer (polyColor) {
-            var dirRenderer = new google.maps.DirectionsRenderer({map: service.map});
-
-            dirRenderer.setOptions({
+            var opts = {
                 polylineOptions: {
                     strokeColor: polyColor,
                     strokeOpacity: 1,
-                    strokeWeight: 2
-                }
-            });
+                    strokeWeight: 2,
+                    //map: service.map,
+                    zIndex: 12
+                },
+                markerOptions: {
+                    zIndex: 13
+                },
+                hideRouteList: true,
+                preserveViewport: true,
+                //routeIndex: 15,
+                map: service.map
+            };
 
-            return dirRenderer;
+            return new google.maps.DirectionsRenderer(opts);
         }
 
         function createInfoBox(template) {
@@ -334,7 +340,8 @@
             var opts = angular.extend({}, {
                 position: _position,
                 map: service.map,
-                icon: _icon
+                icon: _icon,
+                zIndex: 10
             }, additionalOpts);
 
             return new google.maps.Marker(opts);
@@ -383,7 +390,6 @@
             var latLng = {};
 
             if(_position instanceof google.maps.LatLng) {
-                console.log('object latlng');
                 latLng.lat = _position.lat();
                 latLng.lng = _position.lng() + offset;
             } else{
@@ -971,6 +977,28 @@
         function castLatLngLitToObj(latLngLit) {
             if (latLngLit instanceof google.maps.LatLng) return latLngLit;
             return new google.maps.LatLng(latLngLit);
+        }
+
+        service.computeRoute = computeRoute;
+
+        function computeRoute (routes, directionsRenderer) {
+            var dfd = $q.defer();
+
+            var request = {
+                travelMode: google.maps.DirectionsTravelMode.DRIVING,
+                optimizeWaypoints: true
+            };
+
+            angular.merge(routes, request);
+
+            service.directionsService.route(routes, function (result, status) {
+                if (status == google.maps.DirectionsStatus.OK) {
+                    directionsRenderer.setDirections(result);
+                    dfd.resolve();
+                } else { dfd.reject(); }
+            });
+
+            return dfd.promise;
         }
 
         return service;

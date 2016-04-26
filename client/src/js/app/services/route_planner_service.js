@@ -2,15 +2,17 @@
 'use strict';
 
 angular.module('demoApp')
-    .factory('routePlannerService', ['DEST_MARKER_BASE_PATH', '$rootScope', 'gmapServices', 'zoneServices', 'truckServices', 'alertServices', routePlannerService]);
+    .factory('routePlannerService', ['DEST_MARKER_BASE_PATH', '$rootScope', '$timeout', 'gmapServices', 'zoneServices', 'truckServices', 'alertServices', routePlannerService]);
 
-    function routePlannerService (DEST_MARKER_BASE_PATH, $rootScope, gmapServices, zoneServices, truckServices, alertServices) {
+    function routePlannerService (DEST_MARKER_BASE_PATH, $rootScope, $timeout, gmapServices, zoneServices, truckServices, alertServices) {
         var service = {};
 
         var autocompleteDestination;
         var selectedPlace = {
             latLng: null
         };
+
+        var zoneNo = 1;
 
         var dropDestinationListener;
         service.destinationCtr = {};
@@ -114,6 +116,16 @@ angular.module('demoApp')
                     service.destinationCtr[zoneNo] = 0;
                 }
             }
+
+            for (var zoneNo in directionsRenderers) {
+                if(directionsRenderers[zoneNo] && directionsRenderers[zoneNo].getMap()) {
+                    directionsRenderers[zoneNo].setMap(null);
+                }
+            }
+
+            zoneNo = 1;
+            truckServices.hideTrucks();
+            //gmapServices.tsp.startOver();
         }
 
         function terminateDestinationListener() {
@@ -161,50 +173,127 @@ angular.module('demoApp')
 
         var directionsRenderers = {};
 
-        function calculateRoute (solveFunc) {
-            for (var zoneNo in service.destinations) {
+        //function calculateRoute (solveFunc) {
+        //    for (var zoneNo in service.destinations) {
+        //        // If directions renderer not instantiated
+        //        // initialize it for each zones
+        //        // directionsRenderer with different poly colors based on the zones
+        //        if (!directionsRenderers[zoneNo]) {
+        //            var polyColor = zoneServices.getZoneColor(zoneNo);
+        //            directionsRenderers[zoneNo] = gmapServices.createDirectionsRenderer(polyColor);
+        //        }
+        //
+        //        // get the truck location per zone
+        //        // and push to first index
+        //        var truck = truckServices.getTruckByZoneNo(zoneNo);
+        //
+        //        // sort destination based on the order numbering
+        //        //var sortedDestinations = _.sortBy(service.destinations[zoneNo], 'number');
+        //        var sortedDestinations = service.destinations[zoneNo].slice();
+        //
+        //        sortedDestinations.unshift({
+        //            coordinates: gmapServices.castLatLngLitToObj(truck.location)
+        //        });
+        //
+        //        //gmapServices.tsp.removeWaypoints();
+        //        gmapServices.tsp.startOver();
+        //
+        //        // Add waypoints on tsp service
+        //        sortedDestinations.forEach(function (dest) {
+        //            gmapServices.tsp.addWaypoint(dest.coordinates, function () {});
+        //        });
+        //
+        //        // show trucks per zone
+        //        solveFunc(zoneNo);
+        //    }
+        //}
+
+        function processCoordinates (truckLatLng, coords) {
+            var waypoints = [];
+
+            coords.forEach(function(coords){
+                waypoints.push({
+                    location: coords.coordinates,
+                    stopover: true
+                });
+            });
+
+            var truckLocation = gmapServices.castLatLngLitToObj(truckLatLng);
+
+            return {
+                origin: truckLocation,
+                destination: truckLocation,
+                waypoints: waypoints
+            };
+        }
+
+
+        function calculateRoute(solveFunc) {
+            if(zoneNo > 6) {
+                zoneNo = 1;
+                return;
+            }
+
+            try {
+            //for (var zoneNo in service.destinations) {
                 // If directions renderer not instantiated
                 // initialize it for each zones
                 // directionsRenderer with different poly colors based on the zones
                 if (!directionsRenderers[zoneNo]) {
                     var polyColor = zoneServices.getZoneColor(zoneNo);
                     directionsRenderers[zoneNo] = gmapServices.createDirectionsRenderer(polyColor);
+                } else {
+                    if(directionsRenderers[zoneNo] && !directionsRenderers[zoneNo].getMap()) {
+                        directionsRenderers[zoneNo].setMap(gmapServices.map);
+                    }
                 }
 
                 // get the truck location per zone
                 // and push to first index
                 var truck = truckServices.getTruckByZoneNo(zoneNo);
 
-                console.log('truck for zone '+zoneNo+' : ', truck);
-
                 // sort destination based on the order numbering
-                var sortedDestinations = _.sortBy(service.destinations[zoneNo], 'number');
-                console.log('sorted destinations '+zoneNo+' : ', sortedDestinations);
+                //var sortedDestinations = _.sortBy(service.destinations[zoneNo], 'number');
+                var sortedDestinations = service.destinations[zoneNo].slice();
 
-                sortedDestinations.unshift({
-                    coordinates: gmapServices.castLatLngLitToObj(truck.location)
-                });
+                var destLocations = processCoordinates(truck.location, sortedDestinations);
+
+                truckServices.showTruckByZoneNo(zoneNo);
+                gmapServices.computeRoute(destLocations, directionsRenderers[zoneNo])
+                    .finally(function(){
+                        zoneNo++;
+                        calculateRoute(solveFunc);
+                    });
+
+                //sortedDestinations.unshift({
+                //    coordinates: gmapServices.castLatLngLitToObj(truck.location)
+                //});
+
+                //gmapServices.tsp.removeWaypoints();
+                //gmapServices.tsp.startOver();
 
                 // Add waypoints on tsp service
-                sortedDestinations.forEach(function (dest) {
-                    gmapServices.tsp.addWaypoint(dest.coordinates, function () {});
-                });
+                //sortedDestinations.forEach(function (dest) {
+                //    gmapServices.tsp.addWaypoint(dest.coordinates, function () {
+                //    });
+                //});
 
                 // show trucks per zone
                 solveFunc(zoneNo);
+            //}
+            } catch (err) {
+                zoneNo++;
+                calculateRoute(solveFunc);
             }
         }
 
 
         function calculateFastestRoundtrip () {
             var solveFunction = function (zoneNo) {
-                gmapServices.tsp.solveRoundTrip(function (e) {
-                    truckServices.showTruckByZoneNo(zoneNo);
-
-                    var dir = gmapServices.tsp.getGDirections();
-                    directionsRenderers[zoneNo].setDirections(dir);
-                    //gmapServices.tsp.removeWaypoints();
-                });
+                //gmapServices.tsp.solveRoundTrip(function (tsp) {
+                //    var dir = gmapServices.tsp.getGDirections();
+                //    directionsRenderers[zoneNo].setDirections(dir);
+                //});
             };
 
             calculateRoute(solveFunction);
@@ -214,13 +303,10 @@ angular.module('demoApp')
 
         function calculateFastestAZTrip () {
             var solveFunction = function (zoneNo) {
-                gmapServices.tsp.solveAtoZ(function (e) {
-                    truckServices.showTruckByZoneNo(zoneNo);
-
-                    var dir = gmapServices.tsp.getGDirections();
-                    directionsRenderers[zoneNo].setDirections(dir);
-                    //gmapServices.tsp.removeWaypoints();
-                });
+                //gmapServices.tsp.solveAtoZ(function (tsp) {
+                //    var dir = gmapServices.tsp.getGDirections();
+                //    directionsRenderers[zoneNo].setDirections(dir);
+                //});
             };
 
             calculateRoute(solveFunction);

@@ -1008,26 +1008,28 @@
   BpTspSolver.prototype.removeWaypoint = function(latLng) {
     for (var i = 0; i < waypoints.length; ++i) {
       if (wpActive[i] && waypoints[i].equals(latLng)) {
-	wpActive[i] = false;
-	return true;
+	    wpActive[i] = false;
+	    return true;
       }
     }
     return false;
   };
 
   BpTspSolver.prototype.removeWaypoints = function () {
-    for (var i = 0; i < waypoints.length; ++i) {
-        wpActive[i] = false;
+    for (var i = 0; i < waypoints.length; i++) {
+        //wpActive[i] = false;
+        waypoints.pop();
     }
+    wpActive = [];
+    numActive = 0;
     waypoints = [];
-    return true;
   };
 
   BpTspSolver.prototype.removeAddress = function(addr) {
     for (var i = 0; i < addresses.length; ++i) {
       if (wpActive[i] && addresses[i] == addr) {
-	wpActive[i] = false;
-	return true;
+        wpActive[i] = false;
+        return true;
       }
     }
     return false;

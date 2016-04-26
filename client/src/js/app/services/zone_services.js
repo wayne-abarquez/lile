@@ -77,7 +77,8 @@ angular.module('demoApp')
         }
 
         function getZoneColor (zoneNo) {
-            var foundZone = _.findWhere(ZONES, {name: zoneNo});
+
+            var foundZone = _.findWhere(ZONES, {name: zoneNo.toString()});
             return foundZone.color;
         }
 
