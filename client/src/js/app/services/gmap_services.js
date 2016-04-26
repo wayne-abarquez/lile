@@ -127,6 +127,7 @@
         service.setMapDefaultCursor = setMapDefaultCursor;
         service.setMapTargetCursor = setMapTargetCursor;
         service.createDirectionsRenderer = createDirectionsRenderer;
+        service.castLatLngLitToObj = castLatLngLitToObj;
 
         function apiAvailable() {
             return typeof window.google === 'object';
@@ -965,6 +966,11 @@
         function setMapTargetCursor() {
             if (!service.map) return;
             service.map.setOptions({draggableCursor: 'crosshair'});
+        }
+
+        function castLatLngLitToObj(latLngLit) {
+            if (latLngLit instanceof google.maps.LatLng) return latLngLit;
+            return new google.maps.LatLng(latLngLit);
         }
 
         return service;

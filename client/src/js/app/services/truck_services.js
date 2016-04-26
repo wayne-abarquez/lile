@@ -11,6 +11,8 @@ angular.module('demoApp')
 
         service.initialize = initialize;
         service.toggleTrucks = toggleTrucks;
+        service.getTruckByZoneNo = getTruckByZoneNo;
+        service.showTruckByZoneNo = showTruckByZoneNo;
 
         function initialize () {
             loadTrucks();
@@ -36,6 +38,15 @@ angular.module('demoApp')
                 }
                 return;
             });
+        }
+
+        function getTruckByZoneNo (zoneNo) {
+            return _.findWhere(service.trucks, {zone_id: parseInt(zoneNo)});
+        }
+
+        function showTruckByZoneNo (zoneNo) {
+            var truck = service.getTruckByZoneNo(zoneNo);
+            gmapServices.showMarker(truck.marker);
         }
 
         return service;

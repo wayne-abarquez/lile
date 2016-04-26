@@ -2,9 +2,9 @@
 'use strict';
 
 angular.module('demoApp')
-    .factory('routePlannerService', ['$rootScope', 'gmapServices', 'DEST_MARKER_BASE_PATH', 'zoneServices', 'alertServices', routePlannerService]);
+    .factory('routePlannerService', ['DEST_MARKER_BASE_PATH', '$rootScope', 'gmapServices', 'zoneServices', 'truckServices', 'alertServices', routePlannerService]);
 
-    function routePlannerService ($rootScope, gmapServices, DEST_MARKER_BASE_PATH, zoneServices, alertServices) {
+    function routePlannerService (DEST_MARKER_BASE_PATH, $rootScope, gmapServices, zoneServices, truckServices, alertServices) {
         var service = {};
 
         var autocompleteDestination;
@@ -161,49 +161,71 @@ angular.module('demoApp')
 
         var directionsRenderers = {};
 
-        function calculateFastestRoundtrip () {
-            console.log('calculateFastestRoundtrip');
+        function calculateRoute (solveFunc) {
             for (var zoneNo in service.destinations) {
-                if(!directionsRenderers[zoneNo]) {
+                // If directions renderer not instantiated
+                // initialize it for each zones
+                // directionsRenderer with different poly colors based on the zones
+                if (!directionsRenderers[zoneNo]) {
                     var polyColor = zoneServices.getZoneColor(zoneNo);
                     directionsRenderers[zoneNo] = gmapServices.createDirectionsRenderer(polyColor);
                 }
 
+                // get the truck location per zone
+                // and push to first index
+                var truck = truckServices.getTruckByZoneNo(zoneNo);
+
+                console.log('truck for zone '+zoneNo+' : ', truck);
+
+                // sort destination based on the order numbering
                 var sortedDestinations = _.sortBy(service.destinations[zoneNo], 'number');
-                sortedDestinations.forEach(function(dest){
-                    gmapServices.tsp.addWaypoint(dest.coordinates, function(){});
+                console.log('sorted destinations '+zoneNo+' : ', sortedDestinations);
+
+                sortedDestinations.unshift({
+                    coordinates: gmapServices.castLatLngLitToObj(truck.location)
                 });
 
-                gmapServices.tsp.solveRoundTrip(function(e){
-                    var dir = gmapServices.tsp.getGDirections();
-                    directionsRenderers[zoneNo].setDirections(dir);
-                    gmapServices.tsp.removeWaypoints();
+                // Add waypoints on tsp service
+                sortedDestinations.forEach(function (dest) {
+                    gmapServices.tsp.addWaypoint(dest.coordinates, function () {});
                 });
+
+                // show trucks per zone
+                solveFunc(zoneNo);
             }
         }
 
-        function calculateFastestAZTrip () {
-            console.log('calculateFastestAZTrip');
-            for (var zoneNo in service.destinations) {
-                if (!directionsRenderers[zoneNo]) {
-                    var polyColor = zoneServices.getZoneColor(zoneNo);
-                    console.log('zone ' + zoneNo + ' : ' + polyColor);
-                    directionsRenderers[zoneNo] = gmapServices.createDirectionsRenderer(polyColor);
-                }
 
-                var sortedDestinations = _.sortBy(service.destinations[zoneNo], 'number');
-                sortedDestinations.forEach(function (dest) {
-                    gmapServices.tsp.addWaypoint(dest.coordinates, function () {
-                        console.log('added waypoint for zone: ', zoneNo);
-                    });
-                });
+        function calculateFastestRoundtrip () {
+            var solveFunction = function (zoneNo) {
+                gmapServices.tsp.solveRoundTrip(function (e) {
+                    truckServices.showTruckByZoneNo(zoneNo);
 
-                gmapServices.tsp.solveAtoZ(function (e) {
                     var dir = gmapServices.tsp.getGDirections();
                     directionsRenderers[zoneNo].setDirections(dir);
-                    gmapServices.tsp.removeWaypoints();
+                    //gmapServices.tsp.removeWaypoints();
                 });
-            }
+            };
+
+            calculateRoute(solveFunction);
+
+            console.log('calculateFastestRoundtrip');
+        }
+
+        function calculateFastestAZTrip () {
+            var solveFunction = function (zoneNo) {
+                gmapServices.tsp.solveAtoZ(function (e) {
+                    truckServices.showTruckByZoneNo(zoneNo);
+
+                    var dir = gmapServices.tsp.getGDirections();
+                    directionsRenderers[zoneNo].setDirections(dir);
+                    //gmapServices.tsp.removeWaypoints();
+                });
+            };
+
+            calculateRoute(solveFunction);
+
+            console.log('calculateFastestAZTrip');
         }
 
 
