@@ -30,3 +30,5 @@
 2016-04-26 11:06:53,389 INFO - run.py <module>: Starting app
 2016-04-26 11:43:08,137 INFO - __init__.py <module>: Will output log to /var/www/lile/logs/app.log
 2016-04-26 11:43:08,167 INFO - run.py <module>: Starting app
+2016-04-26 15:15:37,063 INFO - __init__.py <module>: Will output log to /var/www/lile/logs/app.log
+2016-04-26 15:15:37,144 INFO - run.py <module>: Starting app

@@ -11,6 +11,8 @@
 
         vm.place = '';
 
+        vm.hasDestination = false;
+
         vm.initialize = initialize;
         vm.addSelectedPlace = addSelectedPlace;
         vm.clearRoutes = clearRoutes;
@@ -40,6 +42,30 @@
                 $scope.$apply(function () {
                     addDestination(zoneNo, destination);
                 });
+            });
+
+            $scope.$watch(function(){
+                return vm.hasDestination;
+            }, function(newValue, oldValue){
+                if(newValue === oldValue) return;
+                $("ul.collapsible > li.li-parent-destinations-list > .collapsible-header").trigger('click');
+            });
+
+            $scope.$watchCollection(function(){
+              return vm.destinations;
+            }, function(newValue) {
+                if(_.isEmpty(newValue)) {
+                    vm.hasDestination = false;
+                    return;
+                } else {
+                    for(var zoneNo in newValue) {
+                        if(newValue[zoneNo].length > 0) {
+                            vm.hasDestination = true;
+                            return;
+                        }
+                    }
+                    vm.hasDestination = false;
+                }
             });
         }
 
