@@ -1,0 +1,44 @@
+#rfp-layer-toggle-btn {
+  position: absolute;
+  top: 6%;
+  right: 0;
+}
+
+md-sidenav#rfp-layers-panel {
+  width: 40%;
+
+  md-toolbar {
+    min-height: 50px;
+    max-height: 50px;
+
+    .md-toolbar-tools {
+      max-height: inherit !important;
+      padding: 0 10px;
+
+      button {
+        min-width: 0px;
+      }
+    }
+  }
+
+  md-content {
+    padding-top: 0;
+    .content {
+      padding-top: 0;
+
+      md-list {
+        padding-top: 0;
+
+        md-list-item {
+          min-height: 50px;
+
+          .md-list-item-text {
+             margin: 0 10px;
+          }
+        }
+      }
+
+    }
+  }
+
+}

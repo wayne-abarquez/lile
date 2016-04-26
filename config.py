@@ -13,23 +13,23 @@ class Config(object):
     STATIC_FOLDER = '/var/www/lile/client/static'
     TEMPLATES_FOLDER = '/var/www/lile/client/templates'
     TMP_DIR = '/var/www/lile/tmp'
+    UPLOAD_FOLDER = '/var/www/lile/client/static/uploads/layers'
+    ALLOWED_LAYER_FILE_EXTENSIONS = set(['kml']) # kmz maybe?
+    SQLALCHEMY_DATABASE_URI = 'postgresql://demouser:youcantguess@localhost:5432/lile'
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = 'postgresql://demouser:youcantguess@localhost:5432/demo'
 
 
 class TestingConfig(Config):
     TESTING = True
     WTF_CSRF_ENABLED = False
-    SQLALCHEMY_DATABASE_URI = 'postgresql://demouser:youcantguess@localhost:5432/demo'
 
 
 class ProductionConfig(Config):
-    SQLALCHEMY_DATABASE_URI = 'postgresql://demouser:youcantguess@localhost:5432/demo'
-
+    pass
 
 config_by_name = dict(
     dev=DevelopmentConfig,

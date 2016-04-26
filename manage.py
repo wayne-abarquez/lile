@@ -3,8 +3,7 @@ from flask.ext.migrate import Migrate, MigrateCommand
 
 from app import app
 from app import db
-# Dont forget to import Sqlalchemy models here
-# ex from app.home.models import Solar
+from app.home.models import *
 
 
 manager = Manager(app)

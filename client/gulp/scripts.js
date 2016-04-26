@@ -12,6 +12,7 @@ gulp.task('vendor-scripts', function () {
         paths.bower + 'jquery/dist/jquery.min.js',
         paths.bower + 'underscore/underscore-min.js',
         paths.bower + 'angular/angular.min.js',
+        paths.bower + 'restangular/dist/restangular.min.js',
         paths.bower + 'angular-animate/angular-animate.min.js',
         paths.bower + 'angular-aria/angular-aria.min.js',
         paths.bower + 'angular-cookies/angular-cookies.min.js',
@@ -20,7 +21,16 @@ gulp.task('vendor-scripts', function () {
         paths.bower + 'ngSweetAlert/SweetAlert.min.js',
         paths.bower + 'angular-treasure-overlay-spinner/dist/treasure-overlay-spinner.min.js',
         paths.bower + 'v-accordion/dist/v-accordion.min.js',
-        paths.srcLibJs + 'BpTspSolver.js'
+        paths.srcLibJs + 'BpTspSolver.js',
+
+        paths.bower + 'Blob/Blob.js',
+        paths.bower + 'canvas-toBlob.js/canvas-toBlob.js',
+        paths.bower + 'FileSaver/FileSaver.min.js',
+        paths.bower + 'html2canvas/build/html2canvas.min.js',
+        paths.bower + 'ng-file-upload/ng-file-upload-shim.min.js',
+        paths.bower + 'ng-file-upload/ng-file-upload.min.js',
+        paths.bower + 'angular-bootstrap-colorpicker/js/bootstrap-colorpicker-module.min.js'
+        //paths.bower + 'ng-inline-edit/dist/ng-inline-edit.min.js'
     ])
         .pipe($.plumber())
         .pipe($.concat('vendor.min.js'))

@@ -13,6 +13,7 @@ angular.module('demoApp')
         service.showFilterSelectionEmpty = showFilterSelectionEmpty;
         service.showQueryIsEmpty = showQueryIsEmpty;
         service.showZoneLocationInvalid = showZoneLocationInvalid;
+        service.showInvalidFileUpload = showInvalidFileUpload;
 
         function showBottomLeftToast(message) {
             $mdToast.show(
@@ -48,6 +49,10 @@ angular.module('demoApp')
 
         function showZoneLocationInvalid () {
             showMessage('Selected Location is out of Zone.', 'warning');
+        }
+
+        function showInvalidFileUpload() {
+            showMessage('Invalid File Uploaded.', 'error');
         }
 
         return service;

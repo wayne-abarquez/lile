@@ -1,0 +1,57 @@
+{% raw %}
+<!-- LAYERS PANEL SIDENAV -->
+<md-sidenav class="md-sidenav-right md-whiteframe-z2"
+            md-component-id="rfpLayersPanel"
+            id="rfp-layers-panel">
+    <md-toolbar class="md-primary">
+        <div class="md-toolbar-tools">
+            <md-icon style="margin-right: 10px;">map</md-icon>
+            <h3>RFP Layers</h3>
+            <span flex></span>
+            <md-button ng-click="indexCtl.closeSideNav('rfpLayersPanel')">
+                <md-icon>arrow_forward</md-icon>
+            </md-button>
+        </div>
+    </md-toolbar>
+
+    <md-content layout-padding ng-controller="rfpLayerController as rfpLayerCtl">
+        <div class="content" layout="column">
+
+            <div layout="row">
+                <span flex></span>
+
+                <md-button id="rfp-panel-upload-kml-btn"
+                           ngf-select="rfpLayerCtl.uploadLayerFile($file, $invalidFiles)"
+                           ngf-pattern="'.kml,application/vnd.google-earth.kml+xml'">
+                    <md-icon>file_upload</md-icon>
+                    Upload KML
+                </md-button>
+
+            </div>
+
+            <div>
+                <md-list flex>
+                    <md-subheader class="md-no-sticky">3 line item (with hover)</md-subheader>
+                    <md-list-item class="md-2-line">
+                            <div class="md-list-item-text">
+                                <div layout="row">
+                                    <div layout="column">
+                                        <h3>todos[0].who</h3>
+                                        <p>Secondary text</p>
+                                    </div>
+                                    <span flex></span>
+                                    <md-button class="md-icon-button">
+                                        <md-icon>close</md-icon>
+                                    </md-button>
+                                </div>
+                                <md-divider></md-divider>
+                            </div>
+                    </md-list-item>
+                </md-list>
+            </div>
+
+        </div>
+
+    </md-content>
+</md-sidenav>
+{% endraw %}

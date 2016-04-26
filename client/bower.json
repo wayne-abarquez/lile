@@ -27,6 +27,13 @@
     "angular-material": "~1.0.0",
     "ngSweetAlert": "angular-sweetalert#~1.1.0",
     "angular-treasure-overlay-spinner": "~1.1.0",
-    "v-accordion": "~1.4.1"
+    "v-accordion": "~1.4.1",
+    "ng-inline-edit": "~0.7.0",
+    "ng-file-upload": "~12.0.4",
+    "html2canvas": "~0.4.1",
+    "canvas-toBlob.js": "~0.1.3",
+    "FileSaver": "*",
+    "Blob": "*",
+    "restangular": "~1.5.2"
   }
 }

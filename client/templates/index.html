@@ -16,6 +16,15 @@
             {% include "partials/_layer_panel_controls.html" %}
             {% include "partials/_route_panel.html" %}
             {% include "partials/_layer_panel.html" %}
+
+            <md-button id="rfp-layer-toggle-btn" class="md-icon-button md-raised md-primary" ng-click="indexCtl.toggleRfpPanel()">
+                <md-tooltip md-direction="left">
+                    Show RFP Panel
+                </md-tooltip>
+                <md-icon>map</md-icon>
+            </md-button>
+
+            {% include "partials/_rfp_layers_panel.html" %}
         </div>
     {% raw %}
         </treasure-overlay-spinner>

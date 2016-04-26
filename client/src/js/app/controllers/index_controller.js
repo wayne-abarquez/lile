@@ -17,6 +17,7 @@ angular.module('demoApp')
         vm.initialize = initialize;
         vm.toggleLayerPanel = buildToggler('layerPanel');
         vm.toggleRoutePanel = toggleRoutePanel;
+        vm.toggleRfpPanel = buildToggler('rfpLayersPanel');
         vm.closeSideNav = closeSideNav;
 
         vm.initialize();
