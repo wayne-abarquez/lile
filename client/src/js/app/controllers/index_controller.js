@@ -2,9 +2,9 @@
 'use strict';
 
 angular.module('demoApp')
-    .controller('indexController', ['$scope', '$rootScope', '$mdSidenav', 'routePlannerService', indexController]);
+    .controller('indexController', ['$scope', '$rootScope', '$mdSidenav', 'routePlannerService', 'rfpLayerServices', indexController]);
 
-    function indexController ($scope, $rootScope, $mdSidenav, routePlannerService) {
+    function indexController ($scope, $rootScope, $mdSidenav, routePlannerService, rfpLayerServices) {
         var vm = this;
 
         // Show Treasure Overlay Spinner
@@ -23,6 +23,8 @@ angular.module('demoApp')
         vm.initialize();
 
         function initialize () {
+            rfpLayerServices.loadLayers();
+
             $scope.$on('routePanel-closed', function() {
                 routePlannerService.endService();
             });

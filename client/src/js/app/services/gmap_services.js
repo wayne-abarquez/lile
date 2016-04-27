@@ -2,9 +2,9 @@
     'use strict';
 
     angular.module('demoApp')
-        .factory('gmapServices', ['$log', '$q', gmapServices]);
+        .factory('gmapServices', ['$log', '$q', '$timeout', gmapServices]);
 
-    function gmapServices($log, $q) {
+    function gmapServices($log, $q, $timeout) {
         var service = {};
 
         //infowindow balloons
@@ -43,6 +43,7 @@
          */
         service.apiAvailable = apiAvailable;
         service.createMap = createMap;
+        service.initializeGeocoder = initializeGeocoder;
         service.createInfoBox = createInfoBox;
         service.openInfoBox = openInfoBox;
         service.closeInfoBox = closeInfoBox;
@@ -111,6 +112,8 @@
         service.removeListener = removeListener;
         service.trigger = trigger;
         service.showCurrentLocation = showCurrentLocation;
+        service.processGeocode = processGeocode;
+        service.geocodeAddress = geocodeAddress;
         service.reverseGeocode = reverseGeocode;
         service.loadKMLByURL = loadKMLByURL;
         service.initMapClusterer = initMapClusterer;
@@ -170,6 +173,13 @@
             });
 
             return service.map;
+        }
+
+        function initializeGeocoder () {
+            if (service.map && !service.geocoder) {
+                // initialize geocoder
+                service.geocoder = new google.maps.Geocoder();
+            }
         }
 
         function loadDirectionsService() {
@@ -810,22 +820,36 @@
             return service.createCustomMarker(_latLng, icon, {draggable: isDraggable});
         }
 
-        function reverseGeocode(latLng) {
+        function processGeocode (params) {
             if (!service.geocoder) return;
 
             var dfd = $q.defer();
 
-            service.geocoder.geocode({'latLng': latLng}, function (results, status) {
-                if (status == google.maps.GeocoderStatus.OK) {
-                    dfd.resolve(results);
-                } else {
-                    var error = "Geocoder failed due to: " + status;
-                    $log.error(error);
-                    dfd.reject(error);
-                }
-            });
+            // add timeout to prevent from
+            // reaching the API limit
+            $timeout(function(){
+
+                service.geocoder.geocode(params, function (results, status) {
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        dfd.resolve(results[0]);
+                    } else {
+                        var error = "Geocoder failed due to: " + status;
+                        $log.error(error);
+                        dfd.reject(error);
+                    }
+                });
+
+            }, 200);
 
             return dfd.promise;
+        }
+
+        function geocodeAddress (address) {
+            return service.processGeocode({'address': address});
+        }
+
+        function reverseGeocode(latLng) {
+            return service.processGeocode({'latLng': latLng});
         }
 
         function loadKMLByURL(srcUrl, kmlOptions) {

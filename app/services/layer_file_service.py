@@ -1,24 +1,28 @@
 from app.resources.file_resource import UploadResource
 from app import db
+from app.home.models import LayerFile
 import logging
 
 log = logging.getLogger(__name__)
 
+def get_files():
+    layers = []
+    for layer_file in LayerFile.query.all():
+        layer_file.src = layer_file.get_url()
+        layers.append(layer_file)
+    return layers
 
-# TODO
 def upload(uploaded_file):
     if uploaded_file is not None:
         upload = UploadResource()
-        filename = upload.copy_file(uploaded_file)
-        file_ext = upload.get_file_extension(filename)
+        filepath = upload.copy_file(uploaded_file)
+        # file_ext = upload.get_file_extension(filename)
 
-        #convert kml file here to geojson
+        layer_file = LayerFile(file_path=filepath)
+        db.session.add(layer_file)
+        db.session.commit()
 
-        # solar_file = SolarFile(file_name=filename,
-        #                        type=file_ext)
-        # solar.files.append(solar_file)
-        # db.session.commit()
-        # return solar_file
+        return layer_file
 
     return None
 

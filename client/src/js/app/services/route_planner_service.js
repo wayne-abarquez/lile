@@ -2,9 +2,9 @@
 'use strict';
 
 angular.module('demoApp')
-    .factory('routePlannerService', ['DEST_MARKER_BASE_PATH', '$rootScope', '$timeout', 'gmapServices', 'zoneServices', 'truckServices', 'alertServices', routePlannerService]);
+    .factory('routePlannerService', ['DEST_MARKER_BASE_PATH', '$rootScope', '$timeout', '$q', 'gmapServices', 'zoneServices', 'truckServices', 'alertServices', 'loaderServices', routePlannerService]);
 
-    function routePlannerService (DEST_MARKER_BASE_PATH, $rootScope, $timeout, gmapServices, zoneServices, truckServices, alertServices) {
+    function routePlannerService (DEST_MARKER_BASE_PATH, $rootScope, $timeout, $q, gmapServices, zoneServices, truckServices, alertServices, loaderServices) {
         var service = {};
 
         var autocompleteDestination;
@@ -24,7 +24,8 @@ angular.module('demoApp')
         service.removeDestination = removeDestination;
         service.addPlaceDestination = addPlaceDestination;
         service.calculateFastestRoundtrip = calculateFastestRoundtrip;
-        service.calculateFastestAZTrip = calculateFastestAZTrip;
+        service.insertBulkDestinationAddress = insertBulkDestinationAddress;
+        //service.calculateFastestAZTrip = calculateFastestAZTrip;
 
         function initialize () {
             autocompleteDestination = gmapServices.initializeAutocomplete('destination-address-input');
@@ -37,16 +38,46 @@ angular.module('demoApp')
 
         function activateDropDestinationPoints() {
             dropDestinationListener = gmapServices.addMapListener('click', function (e) {
-                pushDestination(e.latLng);
+
+                loaderServices.showLoader();
+                pushDestination(e.latLng)
+                    .finally(function(){
+                        loaderServices.hideLoader();
+                    });
             });
         }
 
-        function pushDestination (latLng) {
+        function isAddressExist (address) {
+            var addressExist = false;
+
+            if(!service.destinations) return addressExist;
+
+            for(var zoneNo in service.destinations) {
+                service.destinations[zoneNo].forEach(function (dest) {
+                    if (dest.address == address) {
+                        addressExist = true;
+                        return;
+                    }
+                });
+            }
+
+            return addressExist;
+        }
+
+        function pushDestination (latLng, address) {
+            var dfd = $q.defer();
+
             var zoneNo = zoneServices.getZoneNoForLatLng(latLng);
 
             if (zoneNo !== false) {
                 var ctr = generateDestinationNumber(zoneNo);
                 var icon = generateDestinationMarker(ctr, zoneNo);
+
+                if (isAddressExist(address)) {
+                    console.log('Address already exist: ', address);
+                    dfd.reject();
+                    return dfd.promise;
+                }
 
                 var data = {
                     number: ctr,
@@ -54,15 +85,47 @@ angular.module('demoApp')
                     marker: gmapServices.initMarker(latLng, icon)
                 };
 
-                addDestination(data, zoneNo);
+                // if address not specified geocode latLng to string address
+                if (!address) {
+                    gmapServices.reverseGeocode(latLng)
+                        .then(function (response) {
+                            var responseAddress = response.formatted_address;
+
+                            if (isAddressExist(responseAddress)) {
+                                console.log('Address already exist: ', responseAddress);
+                                dfd.reject();
+                                return dfd.promise;
+                            } else {
+                                $timeout(function () {
+                                    data['address'] = responseAddress;
+                                    addDestination(data, zoneNo);
+                                    dfd.resolve();
+                                });
+                            }
+                        }, function () {
+                            dfd.reject();
+                        });
+                } else {
+                    data['address'] = address;
+                    addDestination(data, zoneNo);
+                    dfd.resolve();
+                }
             } else {
                 alertServices.showZoneLocationInvalid();
+                dfd.reject();
             }
+
+            return dfd.promise;
         }
 
         function addPlaceDestination () {
             if (selectedPlace.latLng) {
-                pushDestination(selectedPlace.latLng);
+
+                loaderServices.showLoader();
+                pushDestination(selectedPlace.latLng, selectedPlace.address)
+                    .finally(function () {
+                        loaderServices.hideLoader();
+                    });
 
                 selectedPlace.latLng = null;
             } else {
@@ -74,7 +137,6 @@ angular.module('demoApp')
             if (!service.destinations[zoneNo]) service.destinations[zoneNo] = [];
 
             service.destinations[zoneNo].push(data);
-
             $rootScope.$broadcast('new-destination', {zone: zoneNo, destination: data});
         }
 
@@ -98,6 +160,43 @@ angular.module('demoApp')
                 destination.number = newNo;
                 destination.marker.setIcon(generateDestinationMarker(newNo, zoneNo));
             });
+        }
+
+        var addressCtr = 0;
+
+        // recursive call
+        function addByAddress (addressArray) {
+            if(addressCtr >= addressArray.length) {
+                addressCtr = 0;
+                loaderServices.hideLoader();
+                return;
+            }
+
+            try {
+                gmapServices.geocodeAddress(addressArray[addressCtr])
+                    .then(function (response) {
+                        if (!response) {
+                            console.log('no result on geocoding');
+                        }
+                        $timeout(function () {
+                            pushDestination(response.geometry.location, addressArray[addressCtr]);
+                        });
+                    }, function (error) { console.log('Error on Geocoding Address: ', error); })
+                    .finally(function () {
+                        addressCtr++;
+                        addByAddress(addressArray);
+                    });
+            } catch(err) {  }
+        }
+
+        function insertBulkDestinationAddress(addressArray) {
+            if(!addressArray || addressArray.length <= 0) {
+                alert('Must have atleast 1 address.');
+                return;
+            }
+
+            loaderServices.showLoader();
+            addByAddress(addressArray);
         }
 
         function clearRoutes() {
@@ -158,8 +257,8 @@ angular.module('demoApp')
                 return;
             }
 
+            selectedPlace.address = place.formatted_address;
             selectedPlace.latLng = place.geometry.location;
-
             // If the place has a geometry, then present it on a map.
             if (place.geometry.viewport) {
                 gmapServices.map.fitBounds(place.geometry.viewport);
@@ -227,10 +326,11 @@ angular.module('demoApp')
             };
         }
 
-
+        // this is a recursive function
         function calculateRoute(solveFunc) {
             if(zoneNo > 6) {
                 zoneNo = 1;
+                loaderServices.hideLoader();
                 return;
             }
 
@@ -296,23 +396,19 @@ angular.module('demoApp')
                 //});
             };
 
+            loaderServices.showLoader();
             calculateRoute(solveFunction);
-
-            console.log('calculateFastestRoundtrip');
         }
 
-        function calculateFastestAZTrip () {
-            var solveFunction = function (zoneNo) {
-                //gmapServices.tsp.solveAtoZ(function (tsp) {
-                //    var dir = gmapServices.tsp.getGDirections();
-                //    directionsRenderers[zoneNo].setDirections(dir);
-                //});
-            };
-
-            calculateRoute(solveFunction);
-
-            console.log('calculateFastestAZTrip');
-        }
+        //function calculateFastestAZTrip () {
+        //    var solveFunction = function (zoneNo) {
+        //        //gmapServices.tsp.solveAtoZ(function (tsp) {
+        //        //    var dir = gmapServices.tsp.getGDirections();
+        //        //    directionsRenderers[zoneNo].setDirections(dir);
+        //        //});
+        //    };
+        //    calculateRoute(solveFunction);
+        //}
 
 
         return service;

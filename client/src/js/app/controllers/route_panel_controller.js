@@ -2,9 +2,9 @@
     'use strict';
 
     angular.module('demoApp')
-        .controller('routePanelController', ['$scope', '$rootScope', '$timeout', 'gmapServices', 'routePlannerService', routePanelController]);
+        .controller('routePanelController', ['$scope', '$rootScope', '$timeout', 'gmapServices', 'routePlannerService', 'alertServices', 'uploadServices', routePanelController]);
 
-    function routePanelController($scope, $rootScope, $timeout, gmapServices, routePlannerService) {
+    function routePanelController($scope, $rootScope, $timeout, gmapServices, routePlannerService, alertServices, uploadServices) {
         var vm = this;
 
         vm.destinations = {};
@@ -18,6 +18,7 @@
         vm.clearRoutes = clearRoutes;
         vm.onClickDestinationItem = onClickDestinationItem;
         vm.removeDestination = removeDestination;
+        vm.uploadBulkAddress = uploadBulkAddress;
 
         vm.calculateFastestRoundtrip = calculateFastestRoundtrip;
         vm.calculateFastestAZTrip = calculateFastestAZTrip;
@@ -27,6 +28,9 @@
         /* Controller Functions here */
 
         function initialize() {
+            // explicit initialization of geocoder
+            gmapServices.initializeGeocoder();
+
             $rootScope.$on('route-panel-opened', function(){
                 // set cursor to crosshair
                 // initialize destination adding when map is clicked
@@ -99,6 +103,21 @@
             });
         }
 
+        function uploadBulkAddress (file, errorFiles) {
+            if (file) {
+                uploadServices.uploadBulkAddress(file)
+                    .then(function(response){
+                        routePlannerService.insertBulkDestinationAddress(response);
+                    }, function(error){
+                        console.log('error uploading bulk address');
+                    });
+            } else {
+                var errFile = errorFiles && errorFiles[0];
+                console.log('error uploading bulk address file: ', errFile);
+                alertServices.showInvalidFileUpload();
+            }
+        }
+
         function updateDestinations (zoneNo) {
             vm.destinations[zoneNo] = [];
             routePlannerService.destinations[zoneNo].forEach(function (destination, index) {
@@ -108,12 +127,13 @@
 
         function addDestination(zoneNo, destination) {
             var coordinates = destination.coordinates.toJSON();
-            var location = '(' + coordinates['lat'] + ', ' + coordinates['lng'] + ')';
+            //var location = '(' + coordinates['lat'] + ', ' + coordinates['lng'] + ')';
             vm.destinations[zoneNo].push({
                 number: destination.number,
                 latLng: coordinates,
                 icon: destination.marker.getIcon(),
-                location: location
+                //location: location,
+                location: destination.address
             });
         }
 

@@ -16,19 +16,31 @@
 
   <md-content layout-padding ng-controller="routePanelController as routeCtl">
       <div layout="column" class="route-panel-content-body">
-
           <ul class="collapsible" data-collapsible="accordion">
               <li>
                   <div class="collapsible-header"><i class="material-icons">navigation</i>Destinations</div>
                   <div class="collapsible-body">
                   <!-- DESTINATIONS -->
                       <div class="add-destination-by-address-container" layout="column">
-                            <div>
-                                <md-input-container class="route-dest-add-address" md-no-float>
-                                    <input id="destination-address-input" ng-model="routeCtl.place" placeholder="Add Location by Address">
-                                </md-input-container>
-                                <md-button class="md-icon-button md-raised" ng-disabled="routeCtl.place == ''" ng-click="routeCtl.addSelectedPlace()"><md-icon>add</md-icon></md-button>
-                            </div>
+                        <div>
+                            <md-input-container class="route-dest-add-address" md-no-float>
+                                <input id="destination-address-input" ng-model="routeCtl.place" placeholder="Add Location by Address">
+                            </md-input-container>
+                            <md-button class="md-icon-button md-raised" ng-disabled="routeCtl.place == ''" ng-click="routeCtl.addSelectedPlace()"><md-icon>add</md-icon></md-button>
+                        </div>
+
+                        <div style="text-align: center;font-weight: 600;margin:10px 0;">OR</div>
+
+                        <md-button class="md-raised"
+                                   ngf-select="routeCtl.uploadBulkAddress($file, $invalidFiles)"
+                                   ngf-pattern="'.txt,text/plain'">
+                            <md-tooltip md-direction="top">
+                                Note: One Address per Line. File must be a Text (.txt) file.
+                            </md-tooltip>
+                            Upload Bulk Address
+                            <md-icon>file_upload</md-icon>
+                        </md-button>
+
                       </div>
                   </div>
               </li>

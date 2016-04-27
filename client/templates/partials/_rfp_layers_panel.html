@@ -31,16 +31,25 @@
 
             <div>
                 <md-list flex>
-                    <md-subheader class="md-no-sticky">3 line item (with hover)</md-subheader>
-                    <md-list-item class="md-2-line">
+                    <md-subheader class="md-no-sticky">{{ rfpLayerCtl.layers.length }} Layers</md-subheader>
+                    <md-list-item class="md-2-line" ng-repeat="layer in rfpLayerCtl.layers" ng-click="rfpLayerCtl.showLayer(layer.id)">
                             <div class="md-list-item-text">
                                 <div layout="row">
-                                    <div layout="column">
-                                        <h3>todos[0].who</h3>
-                                        <p>Secondary text</p>
+                                    <div layout="column" flex>
+                                        <h3 class="ellipsis">
+                                            <md-tooltip md-direction="left">
+                                                {{ layer.filename }}
+                                            </md-tooltip>
+                                            {{ layer.filename }}
+                                        </h3>
+                                        <p class="ellipsis">
+                                            <md-tooltip md-direction="left">
+                                                {{ layer.file_path }}
+                                            </md-tooltip>
+                                            {{ layer.file_path }}
+                                        </p>
                                     </div>
-                                    <span flex></span>
-                                    <md-button class="md-icon-button">
+                                    <md-button class="md-icon-button" ng-click="rfpLayerCtl.deleteLayer(layer.id)">
                                         <md-icon>close</md-icon>
                                     </md-button>
                                 </div>
