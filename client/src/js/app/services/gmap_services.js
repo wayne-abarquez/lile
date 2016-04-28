@@ -540,9 +540,9 @@
                         google.maps.drawing.OverlayType.RECTANGLE
                     ]
                 },
-                markerOptions: {
-                    icon: service.MARKER_ICONS.RED
-                },
+                //markerOptions: {
+                //    icon: service.MARKER_ICONS.RED
+                //},
                 circleOptions: {
                     clickable: true,
                     draggable: false,
@@ -804,8 +804,7 @@
         }
 
         function removeListener(listener) {
-            if (service.apiAvailable())
-                google.maps.event.removeListener(listener);
+            if (service.apiAvailable()) google.maps.event.removeListener(listener);
         }
 
         function trigger(instance, eventName, args) {

@@ -9,15 +9,14 @@ angular.module('demoApp')
 
         var resource =  {
             upload: function (_file) {
-                var uploadUrl = myModel.getRestangularUrl();
-
-                console.log('LayerFile Resource : Upload');
-
                 return Upload.upload({
-                    url: uploadUrl,
+                    url: myModel.getRestangularUrl(),
                     method: 'POST',
                     data: {file: _file}
                 });
+            },
+            cast: function (layer) {
+                return Restangular.restangularizeElement(null, layer, 'layer_files');
             }
         };
 

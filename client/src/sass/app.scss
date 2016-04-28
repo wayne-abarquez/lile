@@ -5,14 +5,19 @@
 @import "global/common";
 
 @import
-  // UI Components ""
+// UI Components ""
   "ui/_ui",
 
-  // Partials
+// Libs
+  "libs/_colorpicker",
+
+// Partials
   "partials/_top_nav",
   "partials/_layer_panel",
   "partials/_route_panel",
   "partials/_rfp_panel",
+  "partials/_layer_detail_modal",
+  "partials/_drawing_tools",
 
   // Pages
   "pages/_base",

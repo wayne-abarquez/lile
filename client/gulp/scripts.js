@@ -29,8 +29,8 @@ gulp.task('vendor-scripts', function () {
         paths.bower + 'html2canvas/build/html2canvas.min.js',
         paths.bower + 'ng-file-upload/ng-file-upload-shim.min.js',
         paths.bower + 'ng-file-upload/ng-file-upload.min.js',
-        paths.bower + 'angular-bootstrap-colorpicker/js/bootstrap-colorpicker-module.min.js'
-        //paths.srcLibJs + 'togeojson.js'
+        paths.bower + 'angular-bootstrap-colorpicker/js/bootstrap-colorpicker-module.min.js',
+        paths.srcLibJs + 'custom-infowindow.js'
         //paths.bower + 'ng-inline-edit/dist/ng-inline-edit.min.js'
     ])
         .pipe($.plumber())

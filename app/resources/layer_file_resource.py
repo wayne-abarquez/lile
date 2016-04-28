@@ -31,4 +31,22 @@ class LayerFileResource(UploadResource):
         else:
             abort(400, message="Invalid parameters")
 
+
+class LayerFileDetailResource(UploadResource):
+    """
+    Resource for LayerFile detail Resource
+    """
+
+    def delete(self, layer_id):
+        """ DELETE /api/layer_files/:id """
+        log.debug("Delete LayerFile request id={0}".format(layer_id))
+        try:
+            layer_file_service.delete(layer_id)
+            result = dict(status=200, message="OK")
+            return marshal(result, success_fields)
+        except ValueError as err:
+            abort(404, message=err.message)
+
+
 rest_api.add_resource(LayerFileResource, '/api/layer_files')
+rest_api.add_resource(LayerFileDetailResource, '/api/layer_files/<int:layer_id>')

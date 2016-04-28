@@ -31,25 +31,25 @@
 
             <div>
                 <md-list flex>
-                    <md-subheader class="md-no-sticky">{{ rfpLayerCtl.layers.length }} Layers</md-subheader>
-                    <md-list-item class="md-2-line" ng-repeat="layer in rfpLayerCtl.layers" ng-click="rfpLayerCtl.showLayer(layer.id)">
+                    <md-subheader class="md-no-sticky">{{ rfpLayerCtl.layers.length ? rfpLayerCtl.layers.length + " Layer/s" : 'No Layer' }}</md-subheader>
+                    <md-list-item class="md-2-line" ng-repeat="layer in rfpLayerCtl.layers track by $index">
                             <div class="md-list-item-text">
                                 <div layout="row">
-                                    <div layout="column" flex>
+                                    <div layout="column" flex ng-click="rfpLayerCtl.showLayer(layer, $event)">
                                         <h3 class="ellipsis">
+                                            <md-tooltip md-direction="left">
+                                                {{ layer.id }} {{ layer.layer_name }}
+                                            </md-tooltip>
+                                            {{ layer.layer_name }}
+                                        </h3>
+                                        <p class="ellipsis">
                                             <md-tooltip md-direction="left">
                                                 {{ layer.filename }}
                                             </md-tooltip>
                                             {{ layer.filename }}
-                                        </h3>
-                                        <p class="ellipsis">
-                                            <md-tooltip md-direction="left">
-                                                {{ layer.file_path }}
-                                            </md-tooltip>
-                                            {{ layer.file_path }}
                                         </p>
                                     </div>
-                                    <md-button class="md-icon-button" ng-click="rfpLayerCtl.deleteLayer(layer.id)">
+                                    <md-button class="md-icon-button" ng-click="rfpLayerCtl.deleteLayer(layer, $index)">
                                         <md-icon>close</md-icon>
                                     </md-button>
                                 </div>

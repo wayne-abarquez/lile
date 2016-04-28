@@ -21,7 +21,8 @@ gulp.task('vendor-css', function () {
    return gulp.src([
        paths.bower + 'angular-material/angular-material.min.css',
        paths.bower + 'sweetalert/dist/sweetalert.css',
-       paths.bower + 'angular-treasure-overlay-spinner/dist/treasure-overlay-spinner.min.css'
+       paths.bower + 'angular-treasure-overlay-spinner/dist/treasure-overlay-spinner.min.css',
+       paths.bower + 'angular-bootstrap-colorpicker/css/colorpicker.min.css'
    ])
        .pipe($.concatCss('vendor.min.css'))
        .pipe($.csso())

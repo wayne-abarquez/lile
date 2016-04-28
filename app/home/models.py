@@ -7,6 +7,7 @@ import os
 
 
 class LayerFile(BaseModel):
+    layer_name = db.Column(db.String)
     file_path = db.Column(db.Text, nullable=False)
 
     def __init__(self, *args, **kwargs):
@@ -14,7 +15,11 @@ class LayerFile(BaseModel):
         self.src = self.get_url()
         print '__init__ is called from layer_file'
 
-    def get_url(self):
+    def get_filename(self):
         file_split_array = self.file_path.split('/')
-        filename = file_split_array[len(file_split_array)-1]
+        filename = file_split_array[len(file_split_array) - 1]
+        return filename
+
+    def get_url(self):
+        filename = self.get_filename()
         return url_for('static', _external=True, filename='uploads/layers/' + filename)

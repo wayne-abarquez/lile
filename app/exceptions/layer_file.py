@@ -1,0 +1,2 @@
+class LayerFileNotFoundError(ValueError):
+    pass

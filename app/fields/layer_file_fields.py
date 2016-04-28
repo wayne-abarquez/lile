@@ -8,6 +8,7 @@ success_fields = dict(
 
 layer_file_fields = dict(
     id=fields.Integer,
+    layer_name=fields.String,
     file_path=fields.String,
     src=fields.String,
     date_created=fields.DateTime("iso8601"),

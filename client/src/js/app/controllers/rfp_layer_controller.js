@@ -2,9 +2,9 @@
     'use strict';
 
     angular.module('demoApp')
-    .controller('rfpLayerController', ['rfpLayerServices', 'uploadServices', 'alertServices', rfpLayerController]);
+    .controller('rfpLayerController', ['rfpLayerServices', 'alertServices', rfpLayerController]);
 
-    function rfpLayerController (rfpLayerServices, uploadServices, alertServices) {
+    function rfpLayerController (rfpLayerServices, alertServices) {
         var vm = this;
 
         vm.layers = [];
@@ -24,25 +24,26 @@
 
         function uploadLayerFile (file, errorFiles) {
             if (file) {
-                uploadServices.uploadLayerFile(file)
-                    .then(function (response) {
-                        console.log('successfully uploaded layer file: ', response);
-                    }, function (errorResponse) {
-                        console.log('error uploading layer file: ', errorResponse);
+                rfpLayerServices.addLayer(file)
+                    .then(function(layer){
+                        // prevent from double adding layer in array
+                        //vm.layers.push(layer);
                     });
             } else {
                 var errFile = errorFiles && errorFiles[0];
-                console.log('error uploading layer file: ', errFile);
-                alertServices.showInvalidFileUpload();
+                if(errFile) alertServices.showInvalidFileUpload();
             }
         }
 
-        function showLayer (id) {
-            rfpLayerServices.loadLayerById(id);
+        function showLayer (layer, event) {
+            rfpLayerServices.showLayer(layer, event);
         }
 
-        function deleteLayer (id) {
-            console.log('delete layer');
+        function deleteLayer (layer, index) {
+            rfpLayerServices.deleteLayer(layer)
+                .then(function(){
+                    vm.layers.splice(index, 1);
+                });
         }
     }
 

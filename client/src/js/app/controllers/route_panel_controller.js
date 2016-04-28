@@ -113,8 +113,7 @@
                     });
             } else {
                 var errFile = errorFiles && errorFiles[0];
-                console.log('error uploading bulk address file: ', errFile);
-                alertServices.showInvalidFileUpload();
+                if(errFile) alertServices.showInvalidFileUpload();
             }
         }
 

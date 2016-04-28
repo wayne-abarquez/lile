@@ -2,44 +2,80 @@
 'use strict';
 
 angular.module('demoApp')
-    .factory('rfpLayerServices', ['LayerFile', 'gmapServices', rfpLayerServices]);
+    .factory('rfpLayerServices', ['$q', 'LayerFile', 'uploadServices', 'gmapServices', 'modalServices', rfpLayerServices]);
 
-    function rfpLayerServices (LayerFile, gmapServices) {
+    function rfpLayerServices ($q, LayerFile, uploadServices, gmapServices, modalServices) {
         var service = {};
 
         service.layers = [];
-        service.loadedKmlLayer = null;
 
         service.loadLayers = loadLayers;
-        service.loadLayerById = loadLayerById;
+        service.addLayer = addLayer;
+        service.showLayer = showLayer;
+        service.findLayerById = findLayerById;
+        service.findLayerIndexById = findLayerIndexById;
+        service.deleteLayer = deleteLayer;
+
+        function getFilename (file_path) {
+            var fileArray = file_path.split('/');
+            return fileArray[fileArray.length - 1];
+        }
 
         function loadLayers () {
             LayerFile.getList()
                 .then(function(layers){
                     layers.forEach(function(layer){
-                        var fileArray = layer.file_path.split('/');
-                        layer.filename = fileArray[fileArray.length - 1];
+                        layer.filename = getFilename(layer.file_path);
                         service.layers.push(layer);
                     });
-                }, function(err){console.log('err');});
+                });
         }
 
-        function loadLayerById (id) {
-            if(service.loadedKmlLayer && service.loadedKmlLayer.getMap()) {
-                service.loadedKmlLayer.setMap(null);
-            }
+        function addLayer (file) {
+            var dfd = $q.defer();
 
-            var layer = _.findWhere(service.layers, {id: id});
+            uploadServices.uploadLayerFile(file)
+                .then(function (response) {
+                    var layer = response.data.layer_file;
+                    layer.filename = getFilename(layer.file_path);
+                    var restangularizedFile = LayerFile.cast(layer);
+                    service.layers.push(restangularizedFile);
 
-            if(layer) {
-                if(service.loadedKmlLayer) {
-                    service.loadedKmlLayer.setUrl(layer.src);
-                    return;
-                }
+                    dfd.resolve(restangularizedFile);
+                }, function(error) { dfd.reject(error); });
 
-                service.loadedKmlLayer = gmapServices.loadKMLByURL(layer.src);
-                console.log('service.loadedKmlLayer: ', service.loadedKmlLayer);
-            }
+            return dfd.promise;
+        }
+
+        function showLayer (layer, event) {
+            return modalServices.showLayer(layer, event);
+        }
+
+        function findLayerById (id) {
+            return _.findWhere(service.layers, {id: id});
+        }
+
+        function findLayerIndexById(id) {
+            var index = _.findIndex(service.layers, function (layer) {
+                return layer.id = id;
+            });
+
+            return index !== -1 ? index : false;
+        }
+
+        function deleteLayer (layer) {
+            var dfd = $q.defer();
+
+            layer.remove()
+                .then(function(response){
+                    var index = service.findLayerIndexById(layer.id);
+                    if(index) service.layers.splice(index, 1);
+                    dfd.resolve(response);
+                },function(error){
+                    dfd.reject(error);
+                });
+
+            return dfd.promise;
         }
 
         return service;

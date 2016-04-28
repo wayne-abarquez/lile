@@ -19,7 +19,7 @@ class UploadResource(Resource):
         filename = str(uuid4()) + os.pathsep + secure_filename(uploaded_file.filename)
         file_path = os.path.join(UPLOAD_FOLDER, filename)
         uploaded_file.save(file_path)
-        return file_path
+        return {'file_name': filename, 'file_path': file_path}
 
     def get_file_extension(self, filename):
         return filename.rsplit('.', 1)[1].lower()
