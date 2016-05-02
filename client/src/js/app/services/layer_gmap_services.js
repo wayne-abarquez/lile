@@ -16,8 +16,15 @@ angular.module('demoApp')
         service.setMapCursorCrosshair = setMapCursorCrosshair;
         service.setMapCursorDefault = setMapCursorDefault;
         service.loadKMLByURL = loadKMLByURL;
+        service.showInfoWindow = showInfoWindow;
         service.createCanvasInfoWindow = createCanvasInfoWindow;
         service.hideCanvasInfoWindow = hideCanvasInfoWindow;
+        service.createMarker = createMarker;
+        service.createPolyline = createPolyline;
+        service.createCircle = createCircle;
+        service.createPolygon = createPolygon;
+        service.createRectangle = createRectangle;
+        service.showLayer = showLayer;
 
         function createMap(mapId) {
             var mapIdLoc = mapId || 'map3d';
@@ -56,9 +63,7 @@ angular.module('demoApp')
         }
 
         function showDrawingManager(drawingManager) {
-            if(!drawingManager) return;
-
-            if (!drawingManager.getMap()) drawingManager.setMap(service.map);
+            if(drawingManager && !drawingManager.getMap()) drawingManager.setMap(service.map);
 
             gmapServices.setEnableDrawingManager(drawingManager, true);
         }
@@ -90,6 +95,10 @@ angular.module('demoApp')
             return null;
         }
 
+        function showInfoWindow(infoWindow, target) {
+            infoWindow.open(service.map, target);
+        }
+
         function createCanvasInfoWindow() {
             if (!gmapServices.apiAvailable()) return null;
 
@@ -98,7 +107,69 @@ angular.module('demoApp')
 
         function hideCanvasInfoWindow(infoWindow) {
             if (infoWindow) infoWindow.hideInfowindow();
-        };
+        }
+
+        function createMarker(_position, additionalOpts) {
+            if (!gmapServices.apiAvailable()) return null;
+
+            var opts = angular.extend({}, {
+                position: _position,
+                map: service.map
+            }, additionalOpts);
+
+            return new google.maps.Marker(opts);
+        }
+
+        function createPolyline(path, additionalOpts) {
+            if (!gmapServices.apiAvailable()) return null;
+
+            var opts = angular.extend({}, {
+                path: path,
+                map: service.map
+            }, additionalOpts);
+
+            return new google.maps.Polyline(opts);
+        }
+
+        function createCircle(center, radius, additionalOpts) {
+            if (!gmapServices.apiAvailable()) return null;
+
+            var opts = angular.extend({}, {
+                center: center,
+                radius: radius,
+                map: service.map
+            }, additionalOpts);
+
+            return new google.maps.Circle(opts);
+        }
+
+        function createPolygon(path, additionalOpts) {
+            if (!gmapServices.apiAvailable()) return null;
+
+            var opts = angular.extend({}, {
+                path: path,
+                map: service.map
+            }, additionalOpts);
+
+            return new google.maps.Polygon(opts);
+        }
+
+        function createRectangle(bounds, additionalOpts) {
+            if (!gmapServices.apiAvailable()) return null;
+
+            var opts = {
+                bounds: bounds,
+                map: service.map
+            };
+
+            angular.merge(opts, additionalOpts);
+
+            return new google.maps.Rectangle(opts);
+        }
+
+        function showLayer (layer) {
+            if(layer && !layer.getMap()) return layer.setMap(service.map);
+        }
 
         return service;
     }

@@ -29,6 +29,18 @@ def upload(uploaded_file):
     return None
 
 
+def update(layer_id, data):
+    # Prepare Data
+    layer_file = LayerFile.query.get(layer_id)
+
+    if layer_file is None:
+        raise LayerFileNotFoundError("LayerFile id={0} not found".format(layer_id))
+
+    layer_file.update_from_dict(data, ['id', 'src', 'overlay', 'date_created', 'date_modified'])
+
+    db.session.commit()
+
+
 def delete(layer_id):
     # Prepare Data
     layer_file = LayerFile.query.get(layer_id)

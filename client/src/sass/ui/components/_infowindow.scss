@@ -1,90 +1,142 @@
-$infowindow-bg: rgba($primary-color, 0.8);
-$white: whitesmoke;
+.infowindow-input-container {
 
-.marker_info {
+  input,
+  label,
+  select,
+  button,
+  textarea {
+    margin: 0;
+    border: 0;
+    padding: 0;
+    display: inline-block;
+    vertical-align: middle;
+    white-space: normal;
+    background: none;
+    line-height: 1;
 
-  .info {
-    background-color: $infowindow-bg;
-    width: 250px;
-    height: 140px;
-    border-radius: 5px;
-    position: relative;
-    z-index: 9999999;
-    text-align: center;
+    /* Browsers have different default form fonts */
+    font-size: 13px;
+    font-family: Arial;
+  }
 
-    span {
-      font-family: 'Roboto', sans-serif;
-      font-weight: 300;
-      color: #FFFFFF;
-      line-height: 5px;
-      //text-align: center;
-      //margin-bottom: 15px;
-      margin-top: 0px;
-      //display: block;
-      padding: 0px 30px;
-      font-size: 14px;
-    }
+  /* Remove the stupid outer glow in Webkit */
+  input:focus {
+    outline: 0;
+  }
 
-    h4 {
-      width: 230px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+  /* Box Sizing Reset
+  -----------------------------------------------*/
 
-      padding: 5px;
-      margin: 5px;
-      margin-bottom: 0px;
-      font-size: 20px;
-      font-family: 'Roboto', sans-serif;
-      font-weight: 300;
-      color: #ffffff;
+  /* All of our custom controls should be what we expect them to be */
+  input,
+  textarea {
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+  }
 
-      span {
-        width: 100px;
-        height: 1px;
-        background: rgba(#FFFFFF, 0.8);
-        display: block;
-        margin: 0px auto;
-      }
-    }
+  /* These elements are usually rendered a certain way by the browser */
+  button,
+  input[type=reset],
+  input[type=button],
+  input[type=submit],
+  input[type=checkbox],
+  input[type=radio],
+  select {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+  }
 
-    .arrow {
-      width: 0px;
-      height: 0px;
-      position: absolute;
-      padding: 0px !important;
-      left: -28px;
-      top: 60px !important;
-      border: 14px solid rgba(255, 0, 0, 0);
-      top: 0px;
-      border-right-color: $infowindow-bg;
-    }
+  /* Text Inputs
+  -----------------------------------------------*/
 
-    a.infowindow_btn {
-      background: $white;
-      padding: 10px 50px;
-      color: $infowindow-bg;
-      font-size: 14px;
-      text-decoration: none;
-      border-radius: 4px;
-      display: block;
-      width: calc(40% - 10px);
-      text-align: center;
-      bottom: 10px;
-      left: 33px;
-      position: absolute;
-      transition: 0.3s;
+  input[type=date],
+  input[type=datetime],
+  input[type=datetime-local],
+  input[type=email],
+  input[type=month],
+  input[type=number],
+  input[type=password],
+  input[type=range],
+  input[type=search],
+  input[type=tel],
+  input[type=text],
+  input[type=time],
+  input[type=url],
+  input[type=week] {
+  }
 
-      &:hover {
-        background: darken($infowindow-bg, 20%); /* Old browsers */
-        color: $white;
-        box-shadow: none;
-        text-align: center;
-        text-decoration: none;
-      }
+  /* Button Controls
+  -----------------------------------------------*/
 
-    }
+  input[type=checkbox],
+  input[type=radio] {
+    width: 13px;
+    height: 13px;
+  }
 
+  /* File Uploads
+  -----------------------------------------------*/
+
+  input[type=file] {
+
+  }
+
+  /* Search Input
+  -----------------------------------------------*/
+
+  /* Make webkit render the search input like a normal text field */
+  input[type=search] {
+    -webkit-appearance: textfield;
+    -webkit-box-sizing: content-box;
+  }
+
+  /* Turn off the recent search for webkit. It adds about 15px padding on the left */
+  ::-webkit-search-decoration {
+    display: none;
+  }
+
+  /* Buttons
+  -----------------------------------------------*/
+
+  button,
+  input[type="reset"],
+  input[type="button"],
+  input[type="submit"] {
+    /* Fix IE7 display bug */
+    overflow: visible;
+    width: auto;
+  }
+
+  /* IE8 and FF freak out if this rule is within another selector */
+  ::-webkit-file-upload-button {
+    padding: 0;
+    border: 0;
+    background: none;
+  }
+
+  /* Textarea
+  -----------------------------------------------*/
+
+  textarea {
+    /* Move the label to the top */
+    vertical-align: top;
+
+    /* Turn off scroll bars in IE unless needed */
+    overflow: auto;
+  }
+
+  /* Selects
+  -----------------------------------------------*/
+
+  select {
+
+  }
+
+  select[multiple] {
+    /* Move the label to the top */
+    vertical-align: top;
   }
 
 }

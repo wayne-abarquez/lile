@@ -1,10 +1,21 @@
 <md-dialog id="layer-detail-modal" aria-label="Layer Detail" ng-cloak>
         <md-toolbar>
             <div class="md-toolbar-tools">
-                <h3>{{ showLayerCtl.layer.layer_name }}</h3>
+                <!--<h3>showLayerCtl.layer.layer_name</h3>-->
+                <h3 inline-edit="showLayerCtl.layer.layer_name"
+                    inline-edit-validation="showLayerCtl.updateLayerName(newValue)"
+                    inline-edit-btn-edit='<md-icon>mode_edit</md-icon>'
+                    inline-edit-btn-save='<md-icon>save</md-icon>'
+                    inline-edit-btn-cancel='<md-icon>close</md-icon>'>
+                </h3>
                 <span flex></span>
 
-                <md-fab-speed-dial md-direction="left"
+                <md-button class="md-icon-button md-mini" ng-click="showLayerCtl.updateMap()">
+                    <md-tooltip md-direction="top">Add/Edit Map Annotations</md-tooltip>
+                    <md-icon>rate_review</md-icon>
+                </md-button>
+
+                <!--<md-fab-speed-dial md-direction="left"
                                    class="md-scale">
                     <md-fab-trigger>
                         <md-button aria-label="menu" class="md-icon-button">
@@ -19,7 +30,7 @@
                             </md-button>
                         </div>
                     </md-fab-actions>
-                </md-fab-speed-dial>
+                </md-fab-speed-dial> -->
 
 
                 <md-button class="md-icon-button" ng-click="showLayerCtl.close()">

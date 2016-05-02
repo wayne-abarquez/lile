@@ -43,10 +43,7 @@
                                             {{ layer.layer_name }}
                                         </h3>
                                         <p class="ellipsis">
-                                            <md-tooltip md-direction="left">
-                                                {{ layer.filename }}
-                                            </md-tooltip>
-                                            {{ layer.filename }}
+                                            Last Updated: <span am-time-ago="layer.overlay.length ? layer.overlay[0].date_modified : layer.date_modified"></span>
                                         </p>
                                     </div>
                                     <md-button class="md-icon-button" ng-click="rfpLayerCtl.deleteLayer(layer, $index)">

@@ -1,44 +1,41 @@
 <section id="drawing-tools" ng-cloak>
-    <!-- Area Polygon Buttons -->
 
-    <!--
+    <!-- Save -->
+    <!--<md-button class="md-raised md-hue-1 square-icon-button" flex-gt-md="auto"
+               ng-show="showSaveDrawingBtn"
+               ng-click="showLayerCtl.saveDrawing()"
+               ng-cloak>
+        <md-tooltip md-direction="top">Save</md-tooltip>
+        <md-icon>save</md-icon>
+    </md-button>-->
+
+    <!-- Delete Selected -->
+    <!--<md-button class="md-raised md-hue-1 square-icon-button" flex-gt-md="auto"
+               ng-show="showDeleteSelectedShapeBtn"
+               ng-click="showLayerCtl.deleteSelectedShape()"
+               ng-cloak>
+        <md-tooltip md-direction="top">Delete Selected</md-tooltip>
+        <md-icon>delete</md-icon>
+    </md-button>-->
+
+    <!-- Cancel Drawing -->
+    <!--<md-button class="md-raised md-hue-1 square-icon-button" flex-gt-md="auto"
+               ng-show="showCancelDrawingBtn"
+               ng-click="showLayerCtl.cancelDrawing()"
+               ng-cloak>
+        <md-tooltip md-direction="top">Cancel</md-tooltip>
+        <md-icon>clear</md-icon>
+    </md-button>-->
+
+    <!-- Screenshot Buttons -->
+    <div class="screenshot-actions-panel" ng-show="showLayerCtl.showDrawingToolButtons" ng-cloak>
+
         <md-button class="md-raised md-hue-1 square-icon-button" flex-gt-md="auto"
                    ng-click="showLayerCtl.saveDrawing()"
                    ng-cloak>
             <md-tooltip md-direction="top">Save</md-tooltip>
             <md-icon>save</md-icon>
         </md-button>
-        -->
-
-    <!-- Save -->
-    <md-button class="md-raised md-hue-1 square-icon-button" flex-gt-md="auto"
-               ng-show="showSaveDrawingBtn"
-               ng-click="showLayerCtl.saveDrawing()"
-               ng-cloak>
-        <md-tooltip md-direction="top">Save</md-tooltip>
-        <md-icon>save</md-icon>
-    </md-button>
-
-    <!-- Delete Selected -->
-    <md-button class="md-raised md-hue-1 square-icon-button" flex-gt-md="auto"
-               ng-show="showDeleteSelectedShapeBtn"
-               ng-click="showLayerCtl.deleteSelectedShape()"
-               ng-cloak>
-        <md-tooltip md-direction="top">Delete Selected</md-tooltip>
-        <md-icon>delete</md-icon>
-    </md-button>
-
-    <!-- Cancel Drawing -->
-    <md-button class="md-raised md-hue-1 square-icon-button" flex-gt-md="auto"
-               ng-show="showCancelDrawingBtn"
-               ng-click="showLayerCtl.cancelDrawing()"
-               ng-cloak>
-        <md-tooltip md-direction="top">Cancel</md-tooltip>
-        <md-icon>clear</md-icon>
-    </md-button>
-
-    <!-- Screenshot Buttons -->
-    <div class="screenshot-actions-panel" ng-show="showLayerCtl.showDrawingToolButtons" ng-cloak>
 
         <!-- Add Comment -->
         <md-button class="md-raised md-hue-1 square-icon-button" flex-gt-md="auto"
@@ -73,16 +70,15 @@
 
         <!-- Delete Shape -->
         <md-button class="md-raised md-hue-1 square-icon-button"
-                   ng-disabled="!hasScreenshotSelectedShape"
+                   ng-disabled="!showLayerCtl.hasSelectedShape"
                    ng-click="showLayerCtl.deleteSelectedShape()">
             <md-tooltip md-direction="top">Delete Selected</md-tooltip>
             <md-icon>delete</md-icon>
         </md-button>
 
         <!-- Close Screnshot Mode -->
-        <md-button class="md-rshapeStrokeWidthaised md-hue-1 square-icon-button"
+        <md-button class="md-raised md-hue-1 square-icon-button"
                    ng-click="showLayerCtl.stopDrawing()">
-            <md-tooltip md-direction="top">Cancel Sceenshot</md-tooltip>
             <md-icon>clear</md-icon>
         </md-button>
     </div>

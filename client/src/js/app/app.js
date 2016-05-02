@@ -2,7 +2,9 @@
     'use strict';
 
     angular
-        .module('demoApp', ['restangular', 'ngMaterial', 'ngAnimate', 'oitozero.ngSweetAlert', 'ngFileUpload', 'treasure-overlay-spinner', 'vAccordion', 'colorpicker.module'])
+        .module('demoApp', ['restangular', 'ngMaterial', 'ngAnimate', 'oitozero.ngSweetAlert',
+            'ngFileUpload', 'treasure-overlay-spinner', 'vAccordion', 'colorpicker.module',
+            'angularInlineEdit', 'angularMoment'])
 
         .constant('APP_NAME', 'Lile International')
         .constant('BASE_URL', window.location.origin)

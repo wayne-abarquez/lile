@@ -23,3 +23,9 @@ class LayerFile(BaseModel):
     def get_url(self):
         filename = self.get_filename()
         return url_for('static', _external=True, filename='uploads/layers/' + filename)
+
+
+class LayerOverlay(BaseModel):
+    layer_id = db.Column(db.Integer, db.ForeignKey('layer_file.id'), nullable=False)
+    json_content = db.Column(db.Text)
+    layer_file = db.relationship(LayerFile, backref='overlay')

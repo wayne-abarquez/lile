@@ -2,12 +2,13 @@
 'use strict';
 
 angular.module('demoApp')
-    .controller('showLayerController', ['$rootScope', '$scope', 'modalServices', 'layer', 'layerGmapServices', '$timeout', 'drawingServices', showLayerController]);
+    .controller('showLayerController', ['$rootScope', '$scope', 'modalServices', 'layer', 'layerGmapServices', '$timeout', 'drawingServices', 'layerOverlayServices', showLayerController]);
 
-    function showLayerController ($rootScope, $scope, modalServices, layer, layerGmapServices, $timeout, drawingServices) {
+    function showLayerController ($rootScope, $scope, modalServices, layer, layerGmapServices, $timeout, drawingServices, layerOverlayServices) {
         var vm = this;
 
         vm.layer = layer;
+        vm.overlay_copy = angular.copy(vm.layer.overlay);
 
         var map;
         var kmlLayer = null;
@@ -18,6 +19,8 @@ angular.module('demoApp')
         $rootScope.showSaveDrawingBtn = false;
         $rootScope.showDeleteSelectedShapeBtn = false;
         $rootScope.showCancelDrawingBtn = false;
+
+        vm.hasSelectedShape = false;
 
         $rootScope.shapeFillColor = '';
         $rootScope.shapeStrokeColor = '';
@@ -40,8 +43,8 @@ angular.module('demoApp')
         /* END OF DRAWING TOOLS */
 
         vm.initialize = initialize;
-        vm.editLayer = editLayer;
         vm.updateMap = updateMap;
+        vm.updateLayerName = updateLayerName;
         vm.close = close;
 
         vm.actions = [
@@ -52,9 +55,7 @@ angular.module('demoApp')
         vm.initialize();
 
         function loadLayer() {
-            if (kmlLayer && kmlLayer.getMap()) {
-                kmlLayer.setMap(null);
-            }
+            if (kmlLayer && kmlLayer.getMap())  kmlLayer.setMap(null);
 
             if (kmlLayer) {
                 kmlLayer.setUrl(layer.src);
@@ -73,31 +74,36 @@ angular.module('demoApp')
         function watchDrawingModels() {
             $scope.$watch(function () {
                 return vm.shapeStrokeColor;
-            }, function (newValue, oldValue) {
-                //if(newValue === oldValue) return;
-                //console.log('screenshot shape stroke color is changed: ' + newVal);
+            }, function (newValue) {
                 $rootScope.shapeStrokeColor = newValue;
             });
 
             $scope.$watch(function () {
                 return vm.shapeFillColor;
-            }, function (newValue, oldValue) {
-                //if (newValue === oldValue) return;
-                //console.log('screenshot shape fill color is changed: ' + newVal);
+            }, function (newValue) {
                 $rootScope.shapeFillColor = newValue;
             });
 
             $scope.$watch(function () {
                 return vm.shapeStrokeWidth;
-            }, function (newValue, oldValue) {
-                //if (newValue === oldValue) return;
-                //console.log('screenshot shape stroke color is changed: ' + newVal);
+            }, function (newValue) {
                 $rootScope.shapeStrokeWidth = newValue;
             });
         }
 
+        function loadOverlay (overlayArray) {
+            if(!overlayArray.length) return;
+
+            // get the first overlay
+            var overlay = overlayArray[0];
+            var overlayData = JSON.parse(overlay.json_content);
+
+            layerOverlayServices.loadOverlay(overlayData);
+        }
+
         function initialize () {
             console.log('vm.layer: ',vm.layer);
+            console.log('overlay copy: ', vm.overlay_copy);
 
             $timeout(function(){
                 loadMap('layer-map');
@@ -114,19 +120,35 @@ angular.module('demoApp')
                     vm.showDrawingToolButtons = newValue;
                 });
 
+                $rootScope.$watch('hasScreenshotSelectedShape', function (newValue, oldValue) {
+                    if (newValue === oldValue) return;
+                    vm.hasSelectedShape = newValue;
+                });
+
+                loadOverlay(vm.overlay_copy);
+
             }, 100);
 
             $scope.$on('$destroy', function () {
+                layerOverlayServices.destroyOverlays();
                 layerGmapServices.destroyMap();
             });
         }
 
-        function editLayer () {
-            console.log('edit layer');
+        function updateLayerName (layerName) {
+            var origLayerName = angular.copy(vm.layer.layer_name);
+            vm.layer.layer_name = layerName;
+            vm.layer.put()
+                .then(function(response){
+                    console.log('success updating layername : ', response);
+                },function(err){
+                    console.log('error updating layername');
+                    vm.layer.layer_name = origLayerName;
+                });
         }
 
         function updateMap () {
-            drawingServices.initialize();
+            drawingServices.initialize(layerOverlayServices.overlays);
         }
 
         function close () {
@@ -145,15 +167,42 @@ angular.module('demoApp')
         vm.stopDrawing = stopDrawing;
 
         function saveDrawing () {
-            console.log('save drawing');
+            var data = drawingServices.getDrawingData(),
+                promise = null;
+
+            // update overlay
+            if(vm.layer.overlay.length && vm.layer.overlay[0].json_content) {
+                promise = vm.layer.customPUT(data, 'layer_overlays');
+            } else {
+                // create new overlay
+                // save to db json data
+                // dismiss drawing tools
+                promise = vm.layer.customPOST(data, 'layer_overlays');
+            }
+
+            promise
+                .then(function(response){
+                    vm.layer.overlay = response.layer_file.overlay;
+                    vm.overlay_copy = angular.copy(vm.layer.overlay);
+                    // load from layer overlay service
+                    loadOverlay(vm.overlay_copy);
+                }, function (error) {
+                    console.log('error : ', error);
+                });
+
+            promise
+                .finally(function () {
+                    drawingServices.endDrawing();
+                    layerOverlayServices.showOverlay();
+                });
         }
 
         function deleteSelectedShape () {
-            console.log('delete selected shape');
+            $rootScope.$broadcast('delete-selected');
         }
 
         function cancelDrawing () {
-            console.log('cancel drawing');
+            $rootScope.$broadcast('cancel-drawing');
         }
 
         function addTextBubble () {
@@ -165,7 +214,10 @@ angular.module('demoApp')
         }
 
         function stopDrawing(){
-            console.log('stop drawing');
+            $rootScope.$broadcast('screenshot-cancelled');
+            layerOverlayServices.destroyOverlays();
+            vm.layer.overlay = vm.overlay_copy;
+            loadOverlay(vm.layer.overlay);
         }
 
 

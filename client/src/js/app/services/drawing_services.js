@@ -28,8 +28,17 @@ angular.module('demoApp')
             'startScreenshotListener': null
         };
 
+        var colorOpts = {
+            circle: null,
+            polygon: null,
+            polyline: null,
+            rectangle: null
+        };
+
         service.initialize = initialize;
         service.endDrawing = endDrawing;
+        service.getDrawingData = getDrawingData;
+        service.loadOverlay = loadOverlay;
 
         function showScreenshotTools() {
             // Show Map Cancel button
@@ -55,8 +64,6 @@ angular.module('demoApp')
 
         function selectShape(shape) {
             if (selectedShape) {
-                console.log('selectShape: ',selectedShape);
-
                 selectedShape.shape.setDraggable(false);
 
                 if (selectedShape.type != google.maps.drawing.OverlayType.MARKER)
@@ -72,7 +79,9 @@ angular.module('demoApp')
 
                     if (selectedShape.type != google.maps.drawing.OverlayType.MARKER) selectedShape.shape.setEditable(true);
 
-                    $rootScope.hasScreenshotSelectedShape = true;
+                    $rootScope.$apply(function(){
+                        $rootScope.hasScreenshotSelectedShape = true;
+                    });
                 }
             });
         }
@@ -148,13 +157,6 @@ angular.module('demoApp')
 
         /* Color Picker Functions */
 
-        var colorOpts = {
-          circle: null,
-          polygon: null,
-          polyline: null,
-          rectangle: null
-        };
-
         function setDrawingOption(optionName, propertyNames, values) {
             if (drawingManager) {
                 var options = drawingManager.get(optionName);
@@ -190,40 +192,17 @@ angular.module('demoApp')
 
         function onChangeStrokeColor() {
             var color = $rootScope.shapeStrokeColor;
+
             if (!color) return;
 
-            var rgba = /rgba\(([0-9\.]+),([0-9\.]+),([0-9\.]+),([0-9\.]+)\)/.exec(color);
-            var colorHexString = '#'
-                + utilServices.byteToHex(parseFloat(rgba[1]))
-                + utilServices.byteToHex(parseFloat(rgba[2]))
-                + utilServices.byteToHex(parseFloat(rgba[3]))
-            ;
-
-            colorOpts.circle = setDrawingOption('circleOptions', ['strokeColor', 'strokeOpacity'], [colorHexString, parseFloat(rgba[4])]);
-            colorOpts.polygon = setDrawingOption('polygonOptions', ['strokeColor', 'strokeOpacity'], [colorHexString, parseFloat(rgba[4])]);
-            colorOpts.polyline = setDrawingOption('polylineOptions', ['strokeColor', 'strokeOpacity'], [colorHexString, parseFloat(rgba[4])]);
-            colorOpts.rectangle = setDrawingOption('rectangleOptions', ['strokeColor', 'strokeOpacity'], [colorHexString, parseFloat(rgba[4])]);
-
-            updateSelectedShape();
+            changeColor(color, ['strokeColor', 'strokeOpacity']);
         }
 
         function onChangeFillColor() {
             var color = $rootScope.shapeFillColor;
             if (!color) return;
 
-            var rgba = /rgba\(([0-9\.]+),([0-9\.]+),([0-9\.]+),([0-9\.]+)\)/.exec(color);
-            var colorHexString = '#'
-                + utilServices.byteToHex(parseFloat(rgba[1]))
-                + utilServices.byteToHex(parseFloat(rgba[2]))
-                + utilServices.byteToHex(parseFloat(rgba[3]))
-            ;
-
-            colorOpts.circle = setDrawingOption('circleOptions', ['fillColor', 'fillOpacity'], [colorHexString, parseFloat(rgba[4])]);
-            colorOpts.polygon = setDrawingOption('polygonOptions', ['fillColor', 'fillOpacity'], [colorHexString, parseFloat(rgba[4])]);
-            colorOpts.polyline = setDrawingOption('polylineOptions', ['fillColor', 'fillOpacity'], [colorHexString, parseFloat(rgba[4])]);
-            colorOpts.rectangle = setDrawingOption('rectangleOptions', ['fillColor', 'fillOpacity'], [colorHexString, parseFloat(rgba[4])]);
-
-            updateSelectedShape();
+            changeColor(color, ['fillColor', 'fillOpacity']);
         }
 
         function onChangeStrokeWidth() {
@@ -243,16 +222,34 @@ angular.module('demoApp')
 
         /* End Color Picker Functions */
 
-        function overlayCompleteListener(eventArgs) {
+
+
+        // TODO load shapes when drawingManager activated
+
+        function loadOverlay (overlayData) {
+            for (var shapeType in overlayData) {
+                if(shapeType != 'infowindow') {
+                    overlayData[shapeType].forEach(function(overlay){
+                        addShape(overlay, shapeType);
+                    });
+                }
+            }
+        }
+
+        function addShape (_shape, _type) {
             var object = {
-                shape: eventArgs.overlay,
-                type: eventArgs.type,
+                shape: _shape,
+                type: _type,
                 listener: gmapServices.addListener(
-                    eventArgs.overlay, 'click', onClickShape
+                    _shape, 'click', onClickShape
                 )
             };
             shapes.push(object);
             selectLastShape();
+        }
+
+        function overlayCompleteListener(eventArgs) {
+            addShape(eventArgs.overlay, eventArgs.type);
         }
 
         function destroyListeners() {
@@ -271,17 +268,14 @@ angular.module('demoApp')
                 gmapServices.hideDrawingManager(drawingManager);
                 drawingManager = null;
             }
-
             if (drawingCompleteListener) {
                 gmapServices.removeListener(drawingCompleteListener);
                 drawingCompleteListener = null;
             }
-
             if (screenshotCancelledListener) {
                 screenshotCancelledListener();
                 screenshotCancelledListener = null;
             }
-
             destroyListeners();
         }
 
@@ -301,7 +295,7 @@ angular.module('demoApp')
         }
 
         function initDrawingManager() {
-            if (service.drawingManager) {
+            if (drawingManager) {
                 // Reinitialize Drawing Listener
                 initDrawingListener();
                 return;
@@ -329,17 +323,92 @@ angular.module('demoApp')
         function endDrawing() {
             while (shapes.length > 0) deleteShapeAtIndex(shapes.length - 1);
 
-            infoWindowServices.clearInfoWindows();
             hideScreenshotTools();
             destroyDrawingManager();
-
-            console.log('endDrawing is called');
         }
 
-        function initialize () {
+        function getShapeOptions (shape, arrayOpts) {
+            var opts = {},
+                value;
+            arrayOpts.forEach(function(opt){
+                value = shape.get(opt);
+                if (opt == 'strokeWeight' && !value) {
+                    opts[opt] = 0.5;
+                    return;
+                }
+                opts[opt] = value;
+            });
+
+            return opts;
+        }
+
+        function getShapesData() {
+            var data = {};
+            shapes.forEach(function(item){
+                switch(item.type) {
+                    case google.maps.drawing.OverlayType.MARKER:
+                        if(!data[google.maps.drawing.OverlayType.MARKER]) data[google.maps.drawing.OverlayType.MARKER] = [];
+                        data[google.maps.drawing.OverlayType.MARKER].push({
+                            position: item.shape.getPosition().toJSON()
+                        });
+                        break;
+                    case google.maps.drawing.OverlayType.POLYLINE:
+                        if (!data[google.maps.drawing.OverlayType.POLYLINE]) data[google.maps.drawing.OverlayType.POLYLINE] = [];
+                        data[google.maps.drawing.OverlayType.POLYLINE].push(
+                            angular.extend(
+                                getShapeOptions(item.shape, ['strokeColor', 'strokeOpacity', 'strokeWeight']),
+                                { path: item.shape.getPath().getArray() }
+                            )
+                        );
+                        break;
+                    case google.maps.drawing.OverlayType.CIRCLE:
+                        if (!data[google.maps.drawing.OverlayType.CIRCLE]) data[google.maps.drawing.OverlayType.CIRCLE] = [];
+                        data[google.maps.drawing.OverlayType.CIRCLE].push(
+                            angular.extend(
+                                getShapeOptions(item.shape, ['radius', 'fillColor', 'fillOpacity', 'strokeColor', 'strokeOpacity', 'strokeWeight']),
+                                {center: item.shape.getCenter().toJSON()}
+                            )
+                        );
+                        break;
+                    case google.maps.drawing.OverlayType.POLYGON:
+                        if (!data[google.maps.drawing.OverlayType.POLYGON]) data[google.maps.drawing.OverlayType.POLYGON] = [];
+                        data[google.maps.drawing.OverlayType.POLYGON].push(
+                            angular.extend(
+                                getShapeOptions(item.shape, ['fillColor', 'fillOpacity', 'strokeColor', 'strokeOpacity', 'strokeWeight']),
+                                {path: item.shape.getPath().getArray()}
+                            )
+                        );
+                        break;
+                    case google.maps.drawing.OverlayType.RECTANGLE:
+                        if (!data[google.maps.drawing.OverlayType.RECTANGLE]) data[google.maps.drawing.OverlayType.RECTANGLE] = [];
+
+                        data[google.maps.drawing.OverlayType.RECTANGLE].push(
+                            angular.extend(
+                                getShapeOptions(item.shape, ['fillColor', 'fillOpacity', 'strokeColor', 'strokeOpacity', 'strokeWeight']),
+                                {bounds: item.shape.getBounds().toJSON()}
+                            )
+                        );
+                }
+            });
+            return data;
+        }
+
+        // JSON Data
+        function getDrawingData() {
+            var shapeData = getShapesData();
+            var infowindows = infoWindowServices.getListData();
+
+            if(infowindows.length) return angular.extend(shapeData, {infowindow: infowindows});
+
+            return shapeData;
+        }
+
+        // overlayData (optional)
+        function initialize (overlayData) {
             initDrawingManager();
             watchShapeAtrributesValue();
-            //$(document).keyup(cancelScreenshotOnEsc);
+
+            if(overlayData) loadOverlay(overlayData);
         }
 
         return service;

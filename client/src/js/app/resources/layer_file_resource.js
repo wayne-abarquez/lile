@@ -6,17 +6,18 @@ angular.module('demoApp')
 
     function LayerFile (Restangular, Upload) {
         var myModel = Restangular.all('layer_files');
+        var modelUrl = myModel.getRestangularUrl();
 
-        var resource =  {
+        var resource = {
+            cast: function (layer) {
+                return Restangular.restangularizeElement(null, layer, 'layer_files');
+            },
             upload: function (_file) {
                 return Upload.upload({
-                    url: myModel.getRestangularUrl(),
+                    url: modelUrl,
                     method: 'POST',
                     data: {file: _file}
                 });
-            },
-            cast: function (layer) {
-                return Restangular.restangularizeElement(null, layer, 'layer_files');
             }
         };
 
