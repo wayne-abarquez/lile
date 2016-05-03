@@ -1,7 +1,12 @@
 <md-dialog id="layer-detail-modal" aria-label="Layer Detail" ng-cloak>
-        <md-toolbar>
+
+    <!-- Loader -->
+    <div id="modal-loader" layout="row" layout-align="center center">
+        <md-progress-circular md-mode="indeterminate" md-diameter="100"></md-progress-circular>
+    </div>
+
+    <md-toolbar>
             <div class="md-toolbar-tools">
-                <!--<h3>showLayerCtl.layer.layer_name</h3>-->
                 <h3 inline-edit="showLayerCtl.layer.layer_name"
                     inline-edit-validation="showLayerCtl.updateLayerName(newValue)"
                     inline-edit-btn-edit='<md-icon>mode_edit</md-icon>'
@@ -15,31 +20,18 @@
                     <md-icon>rate_review</md-icon>
                 </md-button>
 
-                <!--<md-fab-speed-dial md-direction="left"
-                                   class="md-scale">
-                    <md-fab-trigger>
-                        <md-button aria-label="menu" class="md-icon-button">
-                            <md-icon ria-label="menu">menu</md-icon>
-                        </md-button>
-                    </md-fab-trigger>
-                    <md-fab-actions>
-                        <div ng-repeat="item in showLayerCtl.actions">
-                            <md-tooltip md-direction="top">{{ item.name }}</md-tooltip>
-                            <md-button class="md-icon-button md-raised md-mini" ng-click="item.action()">
-                                <md-icon>{{ item.icon }}</md-icon>
-                            </md-button>
-                        </div>
-                    </md-fab-actions>
-                </md-fab-speed-dial> -->
-
+                <md-button class="md-icon-button md-mini" ng-click="showLayerCtl.initilaizePDFExporting()">
+                    <md-tooltip md-direction="top">Export to PDF</md-tooltip>
+                    <md-icon>picture_as_pdf</md-icon>
+                </md-button>
 
                 <md-button class="md-icon-button" ng-click="showLayerCtl.close()">
-                    <md-icon aria-label="Close dialog">close</md-icon>
+                    <md-icon aria-label="Close dialog">arrow_forward</md-icon>
                 </md-button>
             </div>
         </md-toolbar>
-        <md-dialog-content>
-            <div ng-include="'partials/drawing_panel.tmpl.html'"></div>
-            <div id="layer-map"></div>
+        <md-dialog-content id="layer-detail-dialog-content">
+                <div ng-include="'partials/drawing_panel.tmpl.html'"></div>
+                <div id="layer-map"></div>
         </md-dialog-content>
 </md-dialog>

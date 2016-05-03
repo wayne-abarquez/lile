@@ -2,9 +2,9 @@
 'use strict';
 
 angular.module('demoApp')
-    .controller('showLayerController', ['$rootScope', '$scope', 'modalServices', 'layer', 'layerGmapServices', '$timeout', 'drawingServices', 'layerOverlayServices', showLayerController]);
+    .controller('showLayerController', ['$rootScope', '$scope', 'modalServices', 'layer', 'layerGmapServices', '$timeout', 'drawingServices', 'layerOverlayServices', 'screenshotServices', showLayerController]);
 
-    function showLayerController ($rootScope, $scope, modalServices, layer, layerGmapServices, $timeout, drawingServices, layerOverlayServices) {
+    function showLayerController ($rootScope, $scope, modalServices, layer, layerGmapServices, $timeout, drawingServices, layerOverlayServices, screenshotServices) {
         var vm = this;
 
         vm.layer = layer;
@@ -45,6 +45,7 @@ angular.module('demoApp')
         vm.initialize = initialize;
         vm.updateMap = updateMap;
         vm.updateLayerName = updateLayerName;
+        vm.initilaizePDFExporting = initilaizePDFExporting;
         vm.close = close;
 
         vm.actions = [
@@ -102,8 +103,8 @@ angular.module('demoApp')
         }
 
         function initialize () {
-            console.log('vm.layer: ',vm.layer);
-            console.log('overlay copy: ', vm.overlay_copy);
+            //console.log('vm.layer: ',vm.layer);
+            //console.log('overlay copy: ', vm.overlay_copy);
 
             $timeout(function(){
                 loadMap('layer-map');
@@ -127,9 +128,12 @@ angular.module('demoApp')
 
                 loadOverlay(vm.overlay_copy);
 
+                screenshotServices.initialize();
+
             }, 100);
 
             $scope.$on('$destroy', function () {
+                screenshotServices.endService();
                 layerOverlayServices.destroyOverlays();
                 layerGmapServices.destroyMap();
             });
@@ -149,6 +153,10 @@ angular.module('demoApp')
 
         function updateMap () {
             drawingServices.initialize(layerOverlayServices.overlays);
+        }
+
+        function initilaizePDFExporting () {
+            $rootScope.$broadcast('start-screenshot', {mapId: 'layer-map'});
         }
 
         function close () {

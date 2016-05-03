@@ -4,3 +4,7 @@ logs/*.*
 .idea/
 client/src/bower_components/**
 client/node_modules/**
+client/static/uploads/layers/*.kml
+client/static/uploads/screenshots/*.png
+client/static/downloads/*.png
+client/static/downloads/pdfs/*.pdf

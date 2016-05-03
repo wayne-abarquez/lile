@@ -8,6 +8,7 @@ angular.module('demoApp')
         var service = {};
 
         service.map = null;
+        service.overlayView = null;
 
         service.createMap = createMap;
         service.destroyMap = destroyMap;
@@ -15,6 +16,8 @@ angular.module('demoApp')
         service.addMapListener = addMapListener;
         service.setMapCursorCrosshair = setMapCursorCrosshair;
         service.setMapCursorDefault = setMapCursorDefault;
+        service.fromLatLngToContainerPixel = fromLatLngToContainerPixel;
+        service.fromLatLngToDivPixel = fromLatLngToDivPixel;
         service.loadKMLByURL = loadKMLByURL;
         service.showInfoWindow = showInfoWindow;
         service.createCanvasInfoWindow = createCanvasInfoWindow;
@@ -55,6 +58,12 @@ angular.module('demoApp')
                 service.map.setCenter(center);
             });
 
+            var overlayView = new google.maps.OverlayView();
+            overlayView.draw = function () {
+            };
+            overlayView.setMap(service.map);
+            service.overlayView = overlayView;
+
             return service.map;
         }
 
@@ -79,6 +88,20 @@ angular.module('demoApp')
 
         function setMapCursorDefault() {
             if (service.map) service.map.setOptions({draggableCursor: null});
+        }
+
+        function fromLatLngToContainerPixel(latlng) {
+            if (service.overlayView) {
+                return service.overlayView.getProjection().fromLatLngToContainerPixel(latlng);
+            }
+            return new google.maps.Point();
+        }
+
+        function fromLatLngToDivPixel(latlng) {
+            if (service.overlayView) {
+                return service.overlayView.getProjection().fromLatLngToDivPixel(latlng);
+            }
+            return new google.maps.Point();
         }
 
         function loadKMLByURL(srcUrl, kmlOptions) {

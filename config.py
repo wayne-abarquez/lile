@@ -14,6 +14,8 @@ class Config(object):
     TEMPLATES_FOLDER = '/var/www/lile/client/templates'
     TMP_DIR = '/var/www/lile/tmp'
     UPLOAD_FOLDER = '/var/www/lile/client/static/uploads/layers'
+    SCREENSHOT_UPLOAD_FOLDER = '/var/www/lile/client/static/uploads/screenshots'
+    PDF_DOWNLOAD_FOLDER = '/var/www/lile/client/static/downloads/pdfs'
     ALLOWED_LAYER_FILE_EXTENSIONS = set(['kml']) # kmz maybe?
     SQLALCHEMY_DATABASE_URI = 'postgresql://demouser:youcantguess@localhost:5432/lile'
     SQLALCHEMY_TRACK_MODIFICATIONS = True

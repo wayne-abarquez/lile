@@ -9,9 +9,11 @@ angular.module('demoApp')
 
         service.showLoader = showLoader;
         service.hideLoader = hideLoader;
+        service.toggleModalLoader = toggleModalLoader;
 
         function showLoader () {
             $rootScope.spinner.active = true;
+            console.log('showing loader');
         }
 
         function hideLoader (_doApply) {
@@ -23,6 +25,12 @@ angular.module('demoApp')
             } else {
                 $rootScope.spinner.active = false;
             }
+        }
+
+        function toggleModalLoader () {
+           var zIndex = $("#modal-loader").css('zIndex');
+           var newZIndex = zIndex > 0 ? 0 : 12;
+           $("#modal-loader").css('zIndex', newZIndex);
         }
         
 

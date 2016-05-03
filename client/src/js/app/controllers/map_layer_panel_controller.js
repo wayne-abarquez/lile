@@ -2,9 +2,9 @@
 'use strict';
 
 angular.module('demoApp')
-    .controller('mapLayerPanelController', ['$mdSidenav', mapLayerPanelController]);
+    .controller('mapLayerPanelController', [mapLayerPanelController]);
 
-    function mapLayerPanelController ($mdSidenav) {
+    function mapLayerPanelController () {
         var vm = this;
 
         vm.layers = [

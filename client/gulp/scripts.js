@@ -10,6 +10,7 @@ var $ = require('gulp-load-plugins')();
 gulp.task('vendor-scripts', function () {
     return gulp.src([
         paths.bower + 'jquery/dist/jquery.min.js',
+        paths.srcLibJs + 'promise-6.1.0.min.js',
         paths.bower + 'underscore/underscore-min.js',
         paths.bower + 'angular/angular.min.js',
         paths.srcLibJs + 'global_helpers.js',
@@ -28,7 +29,8 @@ gulp.task('vendor-scripts', function () {
         paths.bower + 'Blob/Blob.js',
         paths.bower + 'canvas-toBlob.js/canvas-toBlob.js',
         paths.bower + 'FileSaver/FileSaver.min.js',
-        paths.bower + 'html2canvas/build/html2canvas.min.js',
+        paths.srcLibJs + 'html2canvas.js',
+
         paths.bower + 'ng-file-upload/ng-file-upload-shim.min.js',
         paths.bower + 'ng-file-upload/ng-file-upload.min.js',
         paths.bower + 'angular-bootstrap-colorpicker/js/bootstrap-colorpicker-module.min.js',
