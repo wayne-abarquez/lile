@@ -1,0 +1,29 @@
+{% raw %}
+<md-sidenav ng-click="mainCtl.toggleMainMenu()"
+            md-component-id="mainMenuSidenav"
+            class="md-whiteframe-z2"
+            id="main-menu-sidenav">
+    {% endraw %}
+    <div class="user-info">
+        <div class="profile-image">
+            <md-icon class="user-avatar">account_circle</md-icon>
+        </div>
+        <div class="profile-details">
+            <h3>{{ current_user.username | capitalize }}</h3>
+
+            <p class="profile-role">{{ current_user.role.get_rolename()  | capitalize }}</p>
+        </div>
+    </div>
+    {% raw %}
+    <md-list>
+        <md-list-item ng-repeat="it in mainCtl.menu">
+            <md-divider></md-divider>
+            <a href="{{it.link}}">
+                <md-icon>{{ it.icon }}</md-icon>
+                <span class="title">{{ it.title }}</span>
+                <span class="arrow material-icons">keyboard_arrow_right</span>
+            </a>
+        </md-list-item>
+    </md-list>
+</md-sidenav>
+{% endraw %}

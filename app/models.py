@@ -10,3 +10,17 @@ class BaseModel(db.Model, OrmObject):
     date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
     date_modified = db.Column(db.DateTime, default=db.func.current_timestamp(),
                               onupdate=db.func.current_timestamp())
+
+
+class Person(BaseModel):
+    __abstract__ = True
+
+    first_name = db.Column(db.String)
+    last_name = db.Column(db.String)
+    middle_name = db.Column(db.String)
+    address = db.Column(db.String)
+    contact_no = db.Column(db.String)
+
+    @property
+    def fullname(self):
+        return self.first_name + ' ' + self.last_name

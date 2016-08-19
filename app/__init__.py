@@ -6,6 +6,7 @@ import tempfile
 from flask import Flask
 from flask.ext import restful
 from flask.ext.sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
 
 from config import config_by_name
 
@@ -23,6 +24,12 @@ tempfile.tempdir = app.config.get('TMP_DIR', '')
 
 # global SQLAlchemy instance
 db = SQLAlchemy(app)
+
+# Configure authentication
+lm = LoginManager()
+lm.session_protection = 'strong'
+lm.login_view = 'auth.login'
+lm.init_app(app)
 
 # Config for Logging
 stdout_handler = logging.StreamHandler(sys.stdout)
@@ -43,19 +50,15 @@ rest_api = restful.Api(app, catch_all_404s=True)
 
 # monkey patch WTForm classes
 import wtforms_json
-
 wtforms_json.init()
 
 # Import app/resources
 from resources import *
 
+# Register Auth Blueprint
+from .authentication import auth as auth_blueprint
+app.register_blueprint(auth_blueprint)
+
 # Register Home Blueprint
 from .home import home as home_blueprint
 app.register_blueprint(home_blueprint)
-
-# Register Auth Blueprint
-# Uncomment this to enable authentication
-# from .authentication import auth as auth_blueprint
-# app.register_blueprint(auth_blueprint)
-
-

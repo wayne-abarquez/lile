@@ -16,14 +16,17 @@
     <link rel="stylesheet" href="css/app.min.css">
 </head>
 <body ng-cloak>
-    <div id="base-container" ng-controller="mainController as mainCtl">
-        {# Fixed Top Navbar #}
+    <div id="base-container" ng-controller="mainController as mainCtl" ng-cloak>
+
+        <!-- Fixed Top Navbar -->
         {% include "partials/_top_nav.html" %}
+        {% include "partials/sidenavs/_main_menu.sidenav.html" %}
 
         <!-- Your content goes here -->
-        <div id="page-content">
+        <div flex layout="column">
+            <md-content flex id="base-container">
             {% block content %} {% endblock %}
+            </md-content>
         </div>
-    </div>
 </body>
 </html>

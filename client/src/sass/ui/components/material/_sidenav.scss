@@ -1,0 +1,89 @@
+.sidenav-container {
+  md-backdrop.md-sidenav-backdrop {
+    display: none
+  }
+
+  md-sidenav {
+
+    md-toolbar {
+      height: 50px !important;;
+      min-height: 0 !important;
+
+      .md-toolbar-tools {
+        button.sidenav-primary-button {
+          float: right;
+          position: relative;
+          padding: 10px 0;
+          margin: 50px 0px 5px;
+        }
+      }
+    }
+
+    md-toolbar.filter-toolbar {
+      .md-toolbar-tools {
+        padding:0;
+
+        button:first-child {
+          margin: 0 3px;
+        }
+        form {
+          height: 30px;
+
+          md-input-container {
+            margin: 0;
+            height: 30px;
+          }
+        }
+      }
+    }
+
+  }
+}
+
+.sm-sidenav {
+  overflow-x: hidden;
+
+  @media screen and (min-width: 456px) {
+    width: 200px;
+    min-width: 0px;
+    max-width: 100%;
+  }
+
+  @media screen and (max-width: 456px) {
+    width: calc(80% - 56px);
+    min-width: calc(80% - 56px);
+    max-width: calc(80% - 56px);
+  }
+}
+
+.md-sidenav {
+  overflow-x: hidden;
+
+  @media screen and (min-width: 456px) {
+    width: 250px !important;
+    min-width: 0px;
+    max-width: 100%;
+  }
+
+  @media screen and (max-width: 456px) {
+    width: calc(70% - 56px);
+    min-width: calc(70% - 56px);
+    max-width: calc(90% - 56px);
+  }
+}
+
+.lg-sidenav {
+  overflow-x: hidden;
+
+  @media screen and (min-width: 456px) {
+    width: 400px !important;
+    min-width: 0px;
+    max-width: 100%;
+  }
+
+  @media screen and (max-width: 456px) {
+    width: calc(90% - 56px);
+    min-width: calc(90% - 56px);
+    max-width: calc(90% - 56px);
+  }
+}

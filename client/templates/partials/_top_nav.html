@@ -1,25 +1,21 @@
-{% raw %}
-<md-toolbar id="app-top-nav">
-  <div class="md-toolbar-tools">
+<md-toolbar id="app-top-nav" layout="row">
 
-    <!--<md-button class="md-icon-button" aria-label="Menu">
-      <md-icon>menu</md-icon>
-    </md-button>-->
+    <md-button class="menu" aria-label="Show Menu" ng-click="mainCtl.toggleMainMenu()">
+        <md-icon>&#xE5D2;</md-icon>
+    </md-button>
 
     <span class="solar-title">
-      <a href="#">
-        <img class="company-logo" src="/resources/images/navagis_logo.png">
+      <a href="/index">
+          <img class="company-logo" src="/resources/images/navagis_logo.png">
       </a>
     </span>
 
-    <span style="text-shadow: 1px 1px 2px rgba(0,0,0,.2);">{{ APP_NAME }}</span>
-
     <span flex></span>
 
-    <div class="powered-by">
-        <img src="/resources/images/navagis_powered.png">
+    <div class="powered-by" hide-xs layout="row">
+        <a href="http://navagis.com" target="_blank">
+            <img layout-gt-md="row" src="/resources/images/navagis_powered.png">
+        </a>
     </div>
 
-  </div>
 </md-toolbar>
-{% endraw %}

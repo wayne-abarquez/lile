@@ -1,0 +1,66 @@
+// Toolbar Search
+.toolbar-search {
+  background: transparent;
+  border: 0;
+  color: inherit;
+  font-size: 0.8em;
+  transition: max-width .5s, opacity 0.3s .3s;
+  display: block !important;
+  max-width: 200px;
+  opacity: 1;
+  text-indent: 1em;
+  &::placeholder {
+    color: inherit;
+  }
+  &.ng-show {
+    @include fadeIn();
+  }
+  &.ng-hide {
+    transition: max-width .3s .3s, opacity 0.5s;
+    max-width: 0px;
+    opacity: 0;
+  }
+}
+
+// Button
+.toolbar-button {
+  height: 48px;
+  md-icon {
+    position: relative;
+  }
+}
+
+.toolbar-default {
+  background-color: #ffffff !important;
+  color: #3a3a3a !important;
+
+  md-icon {
+    color: #3a3a3a !important;
+  }
+}
+
+// Toolbar Avatar
+.toolbar-user-avatar {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+
+.toolbar-button-badge {
+  display: block;
+  position: absolute;
+  height: 1.5rem;
+  width: 1.5rem;
+  right: .6rem;
+  top: .6rem;
+  line-height: 1.5rem;
+  font-size: 1rem;
+  border-radius: 50%;
+  background-color: lighten($primary-color, 5%);
+  //@include wobble();
+}
+
+.toolbar-button-badge-new {
+  @include wobble();
+}

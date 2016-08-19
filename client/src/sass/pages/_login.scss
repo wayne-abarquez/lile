@@ -1,6 +1,7 @@
 .full-bg-image {
   background-image: url('/resources/images/login-bg.png');
 }
+
 .login-frame {
   md-card {
     max-width: 400px;
@@ -17,7 +18,7 @@
     background-color: white;
 
     .md-headline {
-      padding-top:15px;
+      padding-top: 15px;
       color: #888;
       font-size: 25px;
       font-weight: 500;
@@ -46,7 +47,7 @@
         text-align: center;
       }
       label {
-        color: rgba(0,0,0,0.4) !important;
+        color: rgba(0, 0, 0, 0.4) !important;
       }
 
       md-input-container .md-input {

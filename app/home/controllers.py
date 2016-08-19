@@ -1,5 +1,6 @@
 from . import home
 from flask import render_template, request, Response
+from flask_login import login_required
 from app.utils.html2canvasproxy import *
 import logging
 
@@ -8,8 +9,10 @@ log = logging.getLogger(__name__)
 real_path = '/var/www/lile/client/static/downloads'
 virtual_path = '/static/downloads'
 
+
 @home.route('/', methods=['GET', 'POST'])
 @home.route('/index', methods=['GET', 'POST'])
+@login_required
 def index():
     return render_template('/index.html')
 
